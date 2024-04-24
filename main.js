@@ -86,6 +86,21 @@ function createColumns() {
   mainContainer.appendChild(colContainer);
 }
 
+function createRows() {
+  const rowContainer = document.createElement("div");
+
+  rowContainer.classList.add("rowContainer");
+  rowContainer.id = "rowContainer";
+
+  chessNotationRows.forEach((Row) => {
+    const row = document.createElement("div");
+    row.id = Row;
+    row.innerHTML = Row;
+    rowContainer.appendChild(row);
+  });
+  mainContainer.appendChild(rowContainer);
+}
+
 function createChessBoard() {
   let board = document.createElement("div");
   board.classList.add("board");
@@ -95,15 +110,19 @@ function createChessBoard() {
   return board;
 }
 
-function drawBoard(cb1, cb2, whiteBoard) {
-  const chessboard = whiteBoard ? cb1.reverse() : cb2;
+function drawBoard(chessBoardWhite, chessBoardBlack, whiteBoard) {
+  const chessboard = whiteBoard ? chessBoardWhite.reverse() : chessBoardBlack;
 
   const squareColor1 = whiteBoard ? "white" : "black";
   const squareColor2 = whiteBoard ? "black" : "white";
 
   if (!whiteBoard) chessNotationColumns.reverse();
-  createColumns();
+  if (whiteBoard) chessNotationRows.reverse();
+
+  // createColumns();
+  // createRows();
   const board = createChessBoard(whiteBoard);
+  createRows();
   createColumns();
 
   chessboard.forEach((row) => {

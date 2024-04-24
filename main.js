@@ -1,49 +1,3 @@
-//V = 1.0.0
-// const chessNotationColumns = ["h", "g", "f", "e", "d", "c", "b", "a"];
-// const chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
-
-// window.onload = () => {
-//   const chessboard = document.getElementById("chessboard");
-//   for (let row = 0; row < 8; row++) {
-//     for (let col = 0; col < 8; col++) {
-//       const square = document.createElement("div");
-//       square.classList.add("square");
-//       if ((row + col) % 2 === 0) {
-//         square.classList.add("white");
-//         square.id = chessNotationColumns[col] + chessNotationRows[row];
-//         if (row === 1 || row === 6) {
-//           square.innerHTML = '<p class="piece">♟</p>';
-//           const piece = square.querySelector(".piece");
-//           piece.addEventListener("click", function () {
-//             deselectAllSquares();
-//             piece.classList.add("selected");
-//           });
-//         }
-//       } else {
-//         square.classList.add("black");
-//         square.id = chessNotationColumns[col] + chessNotationRows[row];
-//         if (row === 1 || row === 6) {
-//           square.innerHTML = '<p class="piece">♟</p>';
-//           const piece = square.querySelector(".piece");
-//           piece.addEventListener("click", function () {
-//             deselectAllSquares();
-//             piece.classList.add("selected");
-//           });
-//         }
-//       }
-//       chessboard.appendChild(square);
-//     }
-//   }
-// };
-
-// function deselectAllSquares() {
-//   const pieces = document.querySelectorAll(".piece");
-//   pieces.forEach((piece) => {
-//     piece.classList.remove("selected");
-//   });
-// }
-
-//v = 1.0.1
 const chessboard = [
   { a1: 1, b1: 2, c1: 1, d1: 2, e1: 1, f1: 2, g1: 1, h1: 2 },
   { a2: 2, b2: 1, c2: 2, d2: 1, e2: 2, f2: 1, g2: 2, h2: 1 },
@@ -66,6 +20,32 @@ const chessboardReverse = [
   { h8: 2, g8: 1, f8: 2, e8: 1, d8: 2, c8: 1, b8: 2, a8: 1 },
 ];
 
+function reverseObject(object) {
+  const keys = Object.keys(object);
+  const reverseObject = {};
+  for (let i = keys.length - 1; i >= 0; i--) {
+    reverseObject[keys[i]] = object[keys[i]] % 2 === 0 ? 1 : 2;
+  }
+  return reverseObject;
+}
+
+function reverseBoard(board) {
+
+}
+
+const objetoOriginal = {
+  a1: 1,
+  b1: 2,
+  c1: 1,
+  d1: 2,
+  e1: 1,
+  f1: 2,
+  g1: 1,
+  h1: 2,
+};
+const objetoInvertido = reverseObject(objetoOriginal);
+console.log(objetoInvertido);
+
 const mainContainer = document.getElementById("main");
 
 let chessNotationColumns = ["a", "b", "c", "d", "e", "f", "g", "h"];
@@ -73,14 +53,10 @@ let chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
 function createColumns(num) {
   const colContainer = document.createElement("div");
-
-  if (num !== undefined) {
-    colContainer.classList.add("colContainer" + num);
-    colContainer.id = "colContainer" + num;
-  } else {
-    colContainer.classList.add("colContainer");
-    colContainer.id = "colContainer";
-  }
+  colContainer.classList.add(
+    num !== undefined ? `colContainer${num}` : `colContainer`
+  );
+  colContainer.id = `colContainer${num !== undefined ? num : ""}`;
 
   chessNotationColumns.forEach((column) => {
     const col = document.createElement("div");
@@ -93,26 +69,22 @@ function createColumns(num) {
 
 function createRows(num) {
   const rowContainer = document.createElement("div");
+  rowContainer.classList.add(
+    num !== undefined ? `rowContainer${num}` : `rowContainer`
+  );
+  rowContainer.id = `rowContainer${num !== undefined ? num : ""}`;
 
-  if (num !== undefined) {
-    rowContainer.classList.add("rowContainer" + num);
-    rowContainer.id = "rowContainer" + num;
-  } else {
-    rowContainer.classList.add("rowContainer");
-    rowContainer.id = "rowContainer";
-  }
-
-  chessNotationRows.forEach((Row) => {
-    const row = document.createElement("div");
-    row.id = Row;
-    row.innerHTML = Row;
-    rowContainer.appendChild(row);
+  chessNotationRows.forEach((row) => {
+    const newRow = document.createElement("div");
+    newRow.id = row;
+    newRow.innerHTML = row;
+    rowContainer.appendChild(newRow);
   });
   mainContainer.appendChild(rowContainer);
 }
 
 function createChessBoard() {
-  let board = document.createElement("div");
+  const board = document.createElement("div");
   board.classList.add("board");
   board.id = "chessboard";
   mainContainer.appendChild(board);
@@ -122,7 +94,6 @@ function createChessBoard() {
 
 function drawBoard(chessBoardWhite, chessBoardBlack, whiteBoard) {
   const chessboard = whiteBoard ? chessBoardWhite.reverse() : chessBoardBlack;
-
   const squareColor1 = whiteBoard ? "white" : "black";
   const squareColor2 = whiteBoard ? "black" : "white";
 
@@ -139,18 +110,15 @@ function drawBoard(chessBoardWhite, chessBoardBlack, whiteBoard) {
     Object.keys(row).forEach((column) => {
       const square = document.createElement("div");
       square.classList.add("square");
-      if (row[column] % 2 === 0) {
-        square.classList.add(`${squareColor1}`);
-        square.id = column;
-      } else {
-        square.classList.add(`${squareColor2}`);
-        square.id = column;
-      }
+      square.classList.add(
+        row[column] % 2 === 0 ? `${squareColor1}` : `${squareColor2}`
+      );
+      square.id = column;
       board.appendChild(square);
     });
   });
 }
 
 window.onload = () => {
-  drawBoard(chessboard, chessboardReverse, true);
+  drawBoard(chessboard, chessboardReverse, false);
 };

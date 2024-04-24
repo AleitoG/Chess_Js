@@ -71,11 +71,16 @@ const mainContainer = document.getElementById("main");
 let chessNotationColumns = ["a", "b", "c", "d", "e", "f", "g", "h"];
 let chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
-function createColumns() {
+function createColumns(num) {
   const colContainer = document.createElement("div");
 
-  colContainer.classList.add("colContainer");
-  colContainer.id = "colContainer";
+  if (num !== undefined) {
+    colContainer.classList.add("colContainer" + num);
+    colContainer.id = "colContainer" + num;
+  } else {
+    colContainer.classList.add("colContainer");
+    colContainer.id = "colContainer";
+  }
 
   chessNotationColumns.forEach((column) => {
     const col = document.createElement("div");
@@ -86,11 +91,16 @@ function createColumns() {
   mainContainer.appendChild(colContainer);
 }
 
-function createRows() {
+function createRows(num) {
   const rowContainer = document.createElement("div");
 
-  rowContainer.classList.add("rowContainer");
-  rowContainer.id = "rowContainer";
+  if (num !== undefined) {
+    rowContainer.classList.add("rowContainer" + num);
+    rowContainer.id = "rowContainer" + num;
+  } else {
+    rowContainer.classList.add("rowContainer");
+    rowContainer.id = "rowContainer";
+  }
 
   chessNotationRows.forEach((Row) => {
     const row = document.createElement("div");
@@ -119,8 +129,8 @@ function drawBoard(chessBoardWhite, chessBoardBlack, whiteBoard) {
   if (!whiteBoard) chessNotationColumns.reverse();
   if (whiteBoard) chessNotationRows.reverse();
 
-  // createColumns();
-  // createRows();
+  createColumns(2);
+  createRows(2);
   const board = createChessBoard(whiteBoard);
   createRows();
   createColumns();
@@ -142,5 +152,5 @@ function drawBoard(chessBoardWhite, chessBoardBlack, whiteBoard) {
 }
 
 window.onload = () => {
-  drawBoard(chessboard, chessboardReverse, false);
+  drawBoard(chessboard, chessboardReverse, true);
 };

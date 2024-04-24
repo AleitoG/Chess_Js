@@ -13,14 +13,13 @@ body {
 }
 .main-container {
   display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
+  grid-template-columns: auto auto auto;
+  grid-template-rows:  auto auto auto;
   grid-template-areas:
-    /* "rows rows rows"
-    "col chessboard col"
-    "rows rows rows"; */
-    "rows chessboard"
-    "space cols";
+    "cols2 cols2 cols2"
+    "rows chessboard rows2"
+    "cols cols cols";
+  justify-items: center;
 }
 .board {
   grid-area: chessboard;
@@ -57,6 +56,7 @@ body {
 }
 .colContainer div {
   width: 80px;
+  
   text-align: center;
 }
 .rowContainer {
@@ -65,5 +65,26 @@ body {
 }
 .rowContainer div {
   height: 80px;
+  width: 8px;
+  align-content: center;
+}
+.colContainer2 {
+  grid-area: cols2;
+  display: flex;
+  flex-wrap: wrap;
+  width: 640px;
+}
+.colContainer2 div {
+  width: 80px;
+  height: 18px;
+  text-align: center;
+}
+.rowContainer2 {
+  grid-area: rows2;
+  height: 640px;
+}
+.rowContainer2 div {
+  height: 80px;
+  width: 8px;
   align-content: center;
 }

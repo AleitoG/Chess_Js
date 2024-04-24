@@ -1,0 +1,48 @@
+html,
+body {
+  margin: 0;
+  width: 100dvw;
+  height: 100dvh;
+}
+.main-container {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+}
+.board {
+  display: flex;
+  flex-wrap: wrap;
+  width: 640px;
+  height: 640px;
+}
+.square {
+  width: 80px;
+  height: 80px;
+}
+.black {
+  background-color: #769656;
+  text-align: center;
+}
+.white {
+  background-color: #eeeed2;
+  text-align: center;
+}
+.piece {
+  margin: 0;
+  font-size: 48px;
+  cursor: pointer;
+}
+.selected {
+  background-color: yellow;
+}
+.colContainer {
+  display: flex;
+  flex-wrap: wrap;
+  width: 640px;
+}
+.colContainer div {
+  width: 80px;
+  text-align: center;
+}

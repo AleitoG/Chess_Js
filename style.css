@@ -19,8 +19,8 @@ body {
     /* "rows rows rows"
     "col chessboard col"
     "rows rows rows"; */
-    "cols chessboard"
-    "space rows";
+    "rows chessboard"
+    "space cols";
 }
 .board {
   grid-area: chessboard;
@@ -50,7 +50,7 @@ body {
   background-color: yellow;
 }
 .colContainer {
-  grid-area: rows;
+  grid-area: cols;
   display: flex;
   flex-wrap: wrap;
   width: 640px;
@@ -60,7 +60,7 @@ body {
   text-align: center;
 }
 .rowContainer {
-  grid-area: cols;
+  grid-area: rows;
   height: 640px;
 }
 .rowContainer div {

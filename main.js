@@ -162,8 +162,10 @@ function startPiecesPositions() {
 function setPiecesImages(pieces) {
   for (let notation of Object.keys(pieces)) {
     const piece = pieces[notation];
-    notation = notation.includes("_") ? notation.split("_")[0] : notation; 
-    piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" />`;
+    notation = notation.includes("_") ? notation.split("_")[0] : notation;
+    piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}"/>`;
+    const cPiece = document.getElementById(`${notation}-${piece.id}`);
+    cPiece.addEventListener("click", () => {});
   }
 }
 

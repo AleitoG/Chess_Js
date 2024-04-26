@@ -25,7 +25,7 @@ function reverseObject(object) {
 
 function reverseBoard(chessBoard) {
   const board = chessBoard;
-  
+
   for (const key in board) {
     if (Object.hasOwnProperty.call(board, key)) {
       board[key] = reverseObject(board[key]);
@@ -76,7 +76,9 @@ function createChessBoard() {
 }
 
 function drawBoard(chessBoardWhite, whiteBoard) {
-  const chessboard = whiteBoard ? chessBoardWhite.reverse() : reverseBoard(chessBoardWhite);
+  const chessboard = whiteBoard
+    ? chessBoardWhite.reverse()
+    : reverseBoard(chessBoardWhite);
   const squareColor1 = whiteBoard ? "white" : "black";
   const squareColor2 = whiteBoard ? "black" : "white";
 
@@ -100,8 +102,72 @@ function drawBoard(chessBoardWhite, whiteBoard) {
       board.appendChild(square);
     });
   });
+  return chessboard;
+}
+
+function startPiecesPositions() {
+  const W_rook_a1 = document.getElementById("a1");
+  const W_rook_h1 = document.getElementById("h1");
+  const B_rook_a8 = document.getElementById("a8");
+  const B_rook_h8 = document.getElementById("h8");
+  const W_knight_b1 = document.getElementById("b1");
+  const W_knight_g1 = document.getElementById("g1");
+  const B_knight_b8 = document.getElementById("b8");
+  const B_knight_g8 = document.getElementById("g8");
+  const W_bishop_c1 = document.getElementById("c1");
+  const W_bishop_f1 = document.getElementById("f1");
+  const B_bishop_c8 = document.getElementById("c8");
+  const B_bishop_f8 = document.getElementById("f8");
+  const W_queen_d1 = document.getElementById("d1");
+  const B_queen_d8 = document.getElementById("d8");
+  const W_king_e1 = document.getElementById("e1");
+  const B_king_e8 = document.getElementById("e8");
+
+  let pieces = {
+    "rook-w": W_rook_a1,
+    "rook-w_2": W_rook_h1,
+    "rook-b": B_rook_a8,
+    "rook-b_2": B_rook_h8,
+    "knight-w": W_knight_b1,
+    "knight-w_2": W_knight_g1,
+    "knight-b": B_knight_b8,
+    "knight-b_2": B_knight_g8,
+    "bishop-w": W_bishop_c1,
+    "bishop-w_2": W_bishop_f1,
+    "bishop-b": B_bishop_c8,
+    "bishop-b_2": B_bishop_f8,
+    "queen-w": W_queen_d1,
+    "queen-b": B_queen_d8,
+    "king-w": W_king_e1,
+    "king-b": B_king_e8,
+  };
+
+  let W_pawns = [];
+
+  for (let index = 0; index < 8; index++) {
+    W_pawns[index] = document.getElementById(`${chessNotationColumns[index]}2`);
+    pieces[`pawn-w_${index + 1}`] = W_pawns[index];
+  }
+
+  let B_pawns = [];
+
+  for (let index = 0; index < 8; index++) {
+    B_pawns[index] = document.getElementById(`${chessNotationColumns[index]}7`);
+    pieces[`pawn-b_${index + 1}`] = B_pawns[index];
+  }
+
+  setPiecesImages(pieces);
+}
+
+function setPiecesImages(pieces) {
+  for (let notation of Object.keys(pieces)) {
+    const piece = pieces[notation];
+    notation = notation.includes("_") ? notation.split("_")[0] : notation; 
+    piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" />`;
+  }
 }
 
 window.onload = () => {
   drawBoard(chessboard, true);
+  startPiecesPositions();
 };

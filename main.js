@@ -13,6 +13,8 @@ const mainContainer = document.getElementById("main");
 
 let chessNotationColumns = ["a", "b", "c", "d", "e", "f", "g", "h"];
 let chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
+let originalColors = [];
+let firstSelectedElement = null;
 
 function reverseObject(object) {
   const keys = Object.keys(object);
@@ -165,11 +167,36 @@ function setPiecesImages(pieces) {
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}"/>`;
     const cPiece = document.getElementById(`${notation}-${piece.id}`);
-    cPiece.addEventListener("click", () => {});
+    cPiece.addEventListener("click", () => getMovements(piece));
+  }
+}
+
+function getMovements(cPiece) {
+  changeCellColor(cPiece);
+}
+
+function changeCellColor(element) {
+  const styleColor = window.getComputedStyle(element);
+  const currentColor = styleColor.backgroundColor;
+  if (!element.classList.contains('selected')) {
+    if (firstSelectedElement !== null) {
+      firstSelectedElement.style.backgroundColor = originalColors.pop();
+      firstSelectedElement.classList.remove('selected');
+    }
+    firstSelectedElement = element;
+    originalColors.push(currentColor);
+    element.style.backgroundColor = '#f5f580';
+    element.classList.add('selected');
+  } else {
+    element.style.backgroundColor = originalColors.pop();
+    element.classList.remove('selected');
+    if (firstSelectedElement === element) {
+      firstSelectedElement = null;
+    }
   }
 }
 
 window.onload = () => {
-  drawBoard(chessboard, true);
+  drawBoard(chessboard, false);
   startPiecesPositions();
 };

@@ -165,14 +165,20 @@ function setPiecesImages(pieces) {
   for (let notation of Object.keys(pieces)) {
     const piece = pieces[notation];
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
-    piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}"/>`;
-    const cPiece = document.getElementById(`${notation}-${piece.id}`);
-    cPiece.addEventListener("click", () => getMovements(piece));
+    piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}"/>`;
+    const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
+    selectedPiece.addEventListener("click", () => getMovements(selectedPiece));
   }
 }
 
-function getMovements(cPiece) {
-  changeCellColor(cPiece);
+function getMovements(selectedPiece) {
+  changeCellColor(selectedPiece);
+  validatePieces(selectedPiece.classList[0]);
+}
+
+function validatePieces(typePiece) {
+   //const pieceVal = typePiece.contains("pawn") ? 'pawn' : ''
+   console.log(typePiece)
 }
 
 function changeCellColor(element) {

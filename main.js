@@ -177,25 +177,24 @@ function getMovements(selectedPiece) {
 }
 
 function validatePieces(typePiece) {
-   //const pieceVal = typePiece.contains("pawn") ? 'pawn' : ''
-   console.log(typePiece)
+  console.log(typePiece);
 }
 
 function changeCellColor(element) {
   const styleColor = window.getComputedStyle(element);
   const currentColor = styleColor.backgroundColor;
-  if (!element.classList.contains('selected')) {
+  if (!element.classList.contains("selected")) {
     if (firstSelectedElement !== null) {
       firstSelectedElement.style.backgroundColor = originalColors.pop();
-      firstSelectedElement.classList.remove('selected');
+      firstSelectedElement.classList.remove("selected");
     }
     firstSelectedElement = element;
     originalColors.push(currentColor);
-    element.style.backgroundColor = '#f5f580';
-    element.classList.add('selected');
+    element.style.backgroundColor = "#f5f580";
+    element.classList.add("selected");
   } else {
     element.style.backgroundColor = originalColors.pop();
-    element.classList.remove('selected');
+    element.classList.remove("selected");
     if (firstSelectedElement === element) {
       firstSelectedElement = null;
     }
@@ -206,3 +205,67 @@ window.onload = () => {
   drawBoard(chessboard, false);
   startPiecesPositions();
 };
+
+// function drop(ev){
+//   ev.preventDefault();
+//   let data=ev.dataTransfer.getData("text");
+//   const pieza=document.getElementById(data);
+//   const destinationSquare=ev.currentTarget;
+//   let destinationSquareId=destinationSquare.id;
+//   if((CuadradoOcupado(destinationSquare)=="blanca")&&(PlazasLegales.includes(destinationSquareId))){
+//       destinationSquare.appendChild(pieza);
+//       TurnoB=!TurnoB;
+//       PlazasLegales.length=0;
+//       return;
+//   }
+//   if((CuadradoOcupado(destinationSquare)!="blanca")&&(PlazasLegales.includes(destinationSquareId))){
+//       while (destinationSquare.firstChild){
+//           destinationSquare.removeChild(destinationSquare.firstChild)
+//       }
+//       destinationSquare.appendChild(pieza);
+//       TurnoB=!TurnoB;
+//       PlazasLegales.length=0;
+//       return;
+//   }
+// }
+// function  ObtenerMovimientos(CuadroInicial,pieza){
+//   const piezaColor=pieza.getAttribute("color");
+//   if(pieza.classList.contains("peon")){
+//       MovimientoPeon(CuadroInicial,piezaColor);
+//   }
+// }
+// function CuadradoOcupado(Linea){
+//   if(Linea.querySelector(".pieza")){
+//       const color = Linea.querySelector(".pieza").getAttribute("color");
+//       return color;
+//   }else{
+//       return "blanca";
+//   }
+// }
+// function MovimientoPeon(CuadroInicial,piezaColor){
+//   DiagonalesPeon(CuadroInicial,piezaColor);
+//   ComprubePeon(CuadroInicial,piezaColor);
+// }
+// function DiagonalesPeon(CuadroInicial,piezaColor){
+//   const fila=CuadroInicial.charAt(0);
+//   const categoria=CuadroInicial.charAt(1);
+//   const categoriaNumero=parseInt(categoria);
+//   let ActualF=fila;
+//   let ActualR=categoriaNumero;
+//   let ActualCI=ActualF+ActualR;
+//   let ActualC=document.getElementById(ActualCI);
+//   let ContenidoC=CuadradoOcupado(ActualC);
+//   const direccion=piezaColor=="white"? 1:-1;
+
+//   ActualR+=direccion;
+//   for(let i=-1;i<=1;i+=2){
+//       ActualF=String.fromCharCode(fila.charCodeAt(0)+i);
+//       if(ActualF>="a" && ActualF<="h"){
+//           ActualCI=ActualF+ActualR;
+//           ActualC=document.getElementById(ActualCI);
+//           ContenidoC=CuadradoOcupado(ActualC);
+//           if(ContenidoC !="blanca" && ContenidoC !=piezaColor)
+//           PlazasLegales.push(ActualCI);
+//       }
+//   }
+// }

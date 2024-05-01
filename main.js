@@ -179,6 +179,22 @@ function getMovements(selectedPiece, gameChessBoard) {
   validatePieces(selectedPiece.classList[0], selectedPiece.id, gameChessBoard);
 }
 
+function drawSelectedPiece(typePiece, squareSelected) {
+  document.getElementById(
+    squareSelected
+  ).innerHTML = `<img src="pieces/${typePiece}.svg" alt="${typePiece}" id="${typePiece}-${squareSelected}" class="${typePiece}"/>`;
+  const selectedPiece = document.getElementById(
+    `${typePiece}-${squareSelected}`
+  );
+  console.log(selectedPiece)
+  selectedPiece.addEventListener("click", () => {
+    console.log("2")
+    getMovements(selectedPiece, null)
+  }
+    
+  );
+}
+
 function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
   const increment = typePiece.includes("-w") ? 1 : -1;
   const verticalMovementIncrement =
@@ -196,12 +212,14 @@ function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
 
   const chessBoardGridItemId = nextSquareIncremented
     ? [nextSquare, nextSquareIncremented]
-    : nextSquare;
+    : [nextSquare];
+
+  const square1 = document.getElementById(`${chessBoardGridItemId[0]}`);
+  const square2 = nextSquareIncremented
+    ? document.getElementById(`${chessBoardGridItemId[1]}`)
+    : null;
 
   if (nextSquareIncremented) {
-    const square1 = document.getElementById(`${chessBoardGridItemId[0]}`);
-    const square2 = document.getElementById(`${chessBoardGridItemId[1]}`);
-
     if (
       document
         .getElementById(typePiece + "-" + positionPiece)
@@ -234,7 +252,6 @@ function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
       square2.innerHTML = "";
     }
   } else {
-    const square1 = document.getElementById(`${chessBoardGridItemId}`);
     if (
       document
         .getElementById(typePiece + "-" + positionPiece)
@@ -260,6 +277,23 @@ function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
 
       square1.classList.remove("validate");
       square1.innerHTML = "";
+    }
+  }
+
+  if (square1.classList.contains("validate")) {
+    square1.addEventListener("click", () => {
+      square1.classList.remove("validate");
+      square1.innerHTML = "";
+      if (square2 !== null) {
+        square2.classList.remove("validate");
+        square2.innerHTML = "";
+      }
+      drawSelectedPiece(typePiece, square1.id);
+    });
+    if (square2 !== null) {
+      square2.addEventListener("click", () => {
+        drawSelectedPiece(typePiece, square2.id);
+      });
     }
   }
 }

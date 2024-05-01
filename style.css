@@ -14,7 +14,7 @@ body {
 .main-container {
   display: grid;
   grid-template-columns: auto auto auto;
-  grid-template-rows:  auto auto auto;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
     "cols2 cols2 cols2"
     "rows chessboard rows2"
@@ -56,7 +56,7 @@ body {
 }
 .colContainer div {
   width: 80px;
-  
+
   text-align: center;
 }
 .rowContainer {
@@ -90,4 +90,15 @@ body {
 }
 img {
   width: 80px;
+}
+.validate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.validate .val-child {
+  background-color: #04e04e;
+  border-radius: 50%;
+  width: 15%;
+  height: 15%;
 }

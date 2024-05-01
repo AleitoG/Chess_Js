@@ -15,6 +15,7 @@ let chessNotationColumns = ["a", "b", "c", "d", "e", "f", "g", "h"];
 let chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
 let originalColors = [];
 let firstSelectedElement = null;
+let firstValidateSquare = null;
 
 function reverseObject(object) {
   const keys = Object.keys(object);
@@ -158,26 +159,148 @@ function startPiecesPositions() {
     pieces[`pawn-b_${index + 1}`] = B_pawns[index];
   }
 
-  setPiecesImages(pieces);
+  return pieces;
 }
 
-function setPiecesImages(pieces) {
+function setSelectedPieces(pieces, gameChessBoard) {
   for (let notation of Object.keys(pieces)) {
     const piece = pieces[notation];
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}"/>`;
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
-    selectedPiece.addEventListener("click", () => getMovements(selectedPiece));
+    selectedPiece.addEventListener("click", () =>
+      getMovements(selectedPiece, gameChessBoard)
+    );
   }
 }
 
-function getMovements(selectedPiece) {
+function getMovements(selectedPiece, gameChessBoard) {
   changeCellColor(selectedPiece);
-  validatePieces(selectedPiece.classList[0]);
+  validatePieces(selectedPiece.classList[0], selectedPiece.id, gameChessBoard);
 }
 
-function validatePieces(typePiece) {
-  console.log(typePiece);
+function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
+  const increment = typePiece.includes("-w") ? 1 : -1;
+  const verticalMovementIncrement =
+    positionPiece.includes("2") || positionPiece.includes("7")
+      ? increment * 2
+      : increment;
+
+  const nextSquare = `${positionPiece[0]}${
+    parseInt(positionPiece[1]) + increment
+  }`;
+  const nextSquareIncremented =
+    verticalMovementIncrement === increment * 2
+      ? `${positionPiece[0]}${parseInt(positionPiece[1]) + increment * 2}`
+      : null;
+
+  const chessBoardGridItemId = nextSquareIncremented
+    ? [nextSquare, nextSquareIncremented]
+    : nextSquare;
+
+  if (nextSquareIncremented) {
+    const square1 = document.getElementById(`${chessBoardGridItemId[0]}`);
+    const square2 = document.getElementById(`${chessBoardGridItemId[1]}`);
+
+    if (
+      document
+        .getElementById(typePiece + "-" + positionPiece)
+        .classList.contains("selected")
+    ) {
+      if (firstValidateSquare !== null) {
+        firstValidateSquare[0].classList.remove("validate");
+        firstValidateSquare[1].classList.remove("validate");
+      }
+
+      square1.classList.add("validate");
+      square1.innerHTML = '<div class="val-child"></div>';
+
+      square2.classList.add("validate");
+      square2.innerHTML = '<div class="val-child"></div>';
+
+      firstValidateSquare = [];
+      firstValidateSquare = [square1, square2];
+    } else {
+      if (
+        firstValidateSquare[0] === square1 &&
+        firstValidateSquare[1] === square2
+      ) {
+        firstValidateSquare = null;
+      }
+
+      square1.classList.remove("validate");
+      square1.innerHTML = "";
+      square2.classList.remove("validate");
+      square2.innerHTML = "";
+    }
+  } else {
+    const square1 = document.getElementById(`${chessBoardGridItemId}`);
+    if (
+      document
+        .getElementById(typePiece + "-" + positionPiece)
+        .classList.contains("selected")
+    ) {
+      if (firstValidateSquare !== null) {
+        firstValidateSquare[0].classList.remove("validate");
+        firstValidateSquare[1].classList.remove("validate");
+      }
+
+      square1.classList.add("validate");
+      square1.innerHTML = '<div class="val-child"></div>';
+
+      firstValidateSquare = [];
+      firstValidateSquare = [square1, square1];
+    } else {
+      if (
+        firstValidateSquare[0] === square1 &&
+        firstValidateSquare[1] === square1
+      ) {
+        firstValidateSquare = null;
+      }
+
+      square1.classList.remove("validate");
+      square1.innerHTML = "";
+    }
+  }
+}
+
+function validateRookMovement(positionPiece, gameChessBoard, typePiece) {}
+
+function validateKnightMovement(positionPiece, gameChessBoard, typePiece) {}
+
+function validateBishopMovement(positionPiece, gameChessBoard, typePiece) {}
+
+function validateQueenMovement(positionPiece, gameChessBoard, typePiece) {}
+
+function validateKingMovement(positionPiece, gameChessBoard, typePiece) {}
+
+function validatePieces(typePiece, piecePosition, gameChessBoard) {
+  const positionPiece = piecePosition.replace(typePiece + "-", "");
+  const pieceType = typePiece.split("-")[0];
+  switch (pieceType) {
+    case "pawn":
+      validatePawnMovement(positionPiece, gameChessBoard, typePiece);
+      break;
+    case "rook":
+      validateRookMovement(positionPiece, gameChessBoard, typePiece);
+      break;
+    case "knight":
+      validateKnightMovement(positionPiece, gameChessBoard, typePiece);
+      break;
+    case "bishop":
+      validateBishopMovement(positionPiece, gameChessBoard, typePiece);
+      break;
+    case "queen":
+      validateQueenMovement(positionPiece, gameChessBoard, typePiece);
+      break;
+    case "king":
+      validateKingMovement(positionPiece, gameChessBoard, typePiece);
+      break;
+
+    default:
+      console.log("error");
+      break;
+  }
 }
 
 function changeCellColor(element) {
@@ -202,70 +325,7 @@ function changeCellColor(element) {
 }
 
 window.onload = () => {
-  drawBoard(chessboard, false);
-  startPiecesPositions();
+  const gameChessBoard = drawBoard(chessboard, true);
+  const gameStartPiecesPositions = startPiecesPositions();
+  setSelectedPieces(gameStartPiecesPositions, gameChessBoard);
 };
-
-// function drop(ev){
-//   ev.preventDefault();
-//   let data=ev.dataTransfer.getData("text");
-//   const pieza=document.getElementById(data);
-//   const destinationSquare=ev.currentTarget;
-//   let destinationSquareId=destinationSquare.id;
-//   if((CuadradoOcupado(destinationSquare)=="blanca")&&(PlazasLegales.includes(destinationSquareId))){
-//       destinationSquare.appendChild(pieza);
-//       TurnoB=!TurnoB;
-//       PlazasLegales.length=0;
-//       return;
-//   }
-//   if((CuadradoOcupado(destinationSquare)!="blanca")&&(PlazasLegales.includes(destinationSquareId))){
-//       while (destinationSquare.firstChild){
-//           destinationSquare.removeChild(destinationSquare.firstChild)
-//       }
-//       destinationSquare.appendChild(pieza);
-//       TurnoB=!TurnoB;
-//       PlazasLegales.length=0;
-//       return;
-//   }
-// }
-// function  ObtenerMovimientos(CuadroInicial,pieza){
-//   const piezaColor=pieza.getAttribute("color");
-//   if(pieza.classList.contains("peon")){
-//       MovimientoPeon(CuadroInicial,piezaColor);
-//   }
-// }
-// function CuadradoOcupado(Linea){
-//   if(Linea.querySelector(".pieza")){
-//       const color = Linea.querySelector(".pieza").getAttribute("color");
-//       return color;
-//   }else{
-//       return "blanca";
-//   }
-// }
-// function MovimientoPeon(CuadroInicial,piezaColor){
-//   DiagonalesPeon(CuadroInicial,piezaColor);
-//   ComprubePeon(CuadroInicial,piezaColor);
-// }
-// function DiagonalesPeon(CuadroInicial,piezaColor){
-//   const fila=CuadroInicial.charAt(0);
-//   const categoria=CuadroInicial.charAt(1);
-//   const categoriaNumero=parseInt(categoria);
-//   let ActualF=fila;
-//   let ActualR=categoriaNumero;
-//   let ActualCI=ActualF+ActualR;
-//   let ActualC=document.getElementById(ActualCI);
-//   let ContenidoC=CuadradoOcupado(ActualC);
-//   const direccion=piezaColor=="white"? 1:-1;
-
-//   ActualR+=direccion;
-//   for(let i=-1;i<=1;i+=2){
-//       ActualF=String.fromCharCode(fila.charCodeAt(0)+i);
-//       if(ActualF>="a" && ActualF<="h"){
-//           ActualCI=ActualF+ActualR;
-//           ActualC=document.getElementById(ActualCI);
-//           ContenidoC=CuadradoOcupado(ActualC);
-//           if(ContenidoC !="blanca" && ContenidoC !=piezaColor)
-//           PlazasLegales.push(ActualCI);
-//       }
-//   }
-// }

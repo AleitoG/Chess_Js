@@ -168,6 +168,7 @@ function setSelectedPieces(pieces, gameChessBoard) {
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}"/>`;
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
+
     selectedPiece.addEventListener("click", () =>
       getMovements(selectedPiece, gameChessBoard)
     );
@@ -183,24 +184,30 @@ function drawSelectedPiece(typePiece, squareSelected) {
   document.getElementById(
     squareSelected
   ).innerHTML = `<img src="pieces/${typePiece}.svg" alt="${typePiece}" id="${typePiece}-${squareSelected}" class="${typePiece}"/>`;
-  const selectedPiece = document.getElementById(
+  const newSelectedPiece = document.getElementById(
     `${typePiece}-${squareSelected}`
   );
-  console.log(selectedPiece)
-  selectedPiece.addEventListener("click", () => {
-    console.log("2")
-    getMovements(selectedPiece, null)
+  const pieceSelected = document.getElementsByClassName("selected");
+  while (pieceSelected.length > 0) {
+    pieceSelected[0].remove();
   }
-    
+  newSelectedPiece.addEventListener(
+    "click",
+    getMovements(newSelectedPiece, null)
   );
 }
 
 function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
   const increment = typePiece.includes("-w") ? 1 : -1;
-  const verticalMovementIncrement =
-    positionPiece.includes("2") || positionPiece.includes("7")
-      ? increment * 2
-      : increment;
+  let verticalMovementIncrement = 0;
+  
+  if (positionPiece.includes("2") && typePiece.includes("-w")) {
+    verticalMovementIncrement = increment * 2;
+  } else if (positionPiece.includes("7") && typePiece.includes("-b")) {
+    verticalMovementIncrement = increment * 2;
+  } else {
+    verticalMovementIncrement = increment;
+  }
 
   const nextSquare = `${positionPiece[0]}${
     parseInt(positionPiece[1]) + increment

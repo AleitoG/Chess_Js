@@ -166,6 +166,7 @@ function setSelectedPieces(pieces, gameChessBoard) {
   for (let notation of Object.keys(pieces)) {
     const piece = pieces[notation];
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
+    piece.classList.add("occupied");
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}"/>`;
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
 
@@ -180,19 +181,22 @@ function getMovements(selectedPiece, gameChessBoard) {
   validatePieces(selectedPiece.classList[0], selectedPiece.id, gameChessBoard);
 }
 
-function drawSelectedPiece(typePiece, squareSelected) {
-  document.getElementById(
-    squareSelected
-  ).innerHTML = `<img src="pieces/${typePiece}.svg" alt="${typePiece}" id="${typePiece}-${squareSelected}" class="${typePiece}"/>`;
+function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
+  const squareContainerSelected = document.getElementById(squareSelected);
+  squareContainerSelected.innerHTML = `<img src="pieces/${typePiece}.svg" alt="${typePiece}" id="${typePiece}-${squareSelected}" class="${typePiece}"/>`;
+  squareContainerSelected.classList.add("occupied");
   const newSelectedPiece = document.getElementById(
     `${typePiece}-${squareSelected}`
   );
-  const pieceSelected = document.getElementsByClassName("selected");
-  while (pieceSelected.length > 0) {
-    pieceSelected[0].remove();
+  const pieceSelected = document.getElementById(
+    `${typePiece}-${positionPiece}`
+  );
+
+  if (pieceSelected !== null) {
+    pieceSelected.remove();
   }
-  newSelectedPiece.addEventListener(
-    "click",
+
+  newSelectedPiece.addEventListener("click", () =>
     getMovements(newSelectedPiece, null)
   );
 }
@@ -200,7 +204,7 @@ function drawSelectedPiece(typePiece, squareSelected) {
 function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
   const increment = typePiece.includes("-w") ? 1 : -1;
   let verticalMovementIncrement = 0;
-  
+
   if (positionPiece.includes("2") && typePiece.includes("-w")) {
     verticalMovementIncrement = increment * 2;
   } else if (positionPiece.includes("7") && typePiece.includes("-b")) {
@@ -222,85 +226,108 @@ function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
     : [nextSquare];
 
   const square1 = document.getElementById(`${chessBoardGridItemId[0]}`);
-  const square2 = nextSquareIncremented
+  let square2 = nextSquareIncremented
     ? document.getElementById(`${chessBoardGridItemId[1]}`)
     : null;
 
-  if (nextSquareIncremented) {
-    if (
-      document
-        .getElementById(typePiece + "-" + positionPiece)
-        .classList.contains("selected")
-    ) {
-      if (firstValidateSquare !== null) {
-        firstValidateSquare[0].classList.remove("validate");
-        firstValidateSquare[1].classList.remove("validate");
+  const nextSquareContent = square1.classList.contains("occupied");
+  if (square2 !== null) {
+    square2 = square2.classList.contains("occupied") ? null : square2;
+  }
+
+  console.log(square2);
+
+  if (!nextSquareContent) {
+    if (square2 !== null) {
+      if (
+        document
+          .getElementById(typePiece + "-" + positionPiece)
+          .classList.contains("selected")
+      ) {
+        if (firstValidateSquare !== null) {
+          firstValidateSquare[0].classList.remove("validate");
+          firstValidateSquare[1].classList.remove("validate");
+        }
+
+        square1.classList.add("validate");
+        square1.innerHTML = '<div class="val-child"></div>';
+
+        square2.classList.add("validate");
+        square2.innerHTML = '<div class="val-child"></div>';
+
+        firstValidateSquare = [];
+        firstValidateSquare = [square1, square2];
+      } else {
+        if (
+          firstValidateSquare[0] === square1 &&
+          firstValidateSquare[1] === square2
+        ) {
+          firstValidateSquare = null;
+        }
+
+        square1.classList.remove("validate");
+        square1.innerHTML = "";
+        square2.classList.remove("validate");
+        square2.innerHTML = "";
       }
-
-      square1.classList.add("validate");
-      square1.innerHTML = '<div class="val-child"></div>';
-
-      square2.classList.add("validate");
-      square2.innerHTML = '<div class="val-child"></div>';
-
-      firstValidateSquare = [];
-      firstValidateSquare = [square1, square2];
     } else {
       if (
-        firstValidateSquare[0] === square1 &&
-        firstValidateSquare[1] === square2
+        document
+          .getElementById(typePiece + "-" + positionPiece)
+          .classList.contains("selected")
       ) {
-        firstValidateSquare = null;
+        if (firstValidateSquare !== null) {
+          firstValidateSquare[0].classList.remove("validate");
+          firstValidateSquare[1].classList.remove("validate");
+        }
+
+        square1.classList.add("validate");
+        square1.innerHTML = '<div class="val-child"></div>';
+
+        firstValidateSquare = [];
+        firstValidateSquare = [square1, square1];
+      } else {
+        if (
+          firstValidateSquare[0] === square1 &&
+          firstValidateSquare[1] === square1
+        ) {
+          firstValidateSquare = null;
+        }
+
+        square1.classList.remove("validate");
+        square1.innerHTML = "";
+      }
+    }
+
+    function square1Selected() {
+      square1.classList.remove("validate");
+      square1.innerHTML = "";
+      if (square2 !== null) {
+        square2.removeEventListener("click", square2Selected);
+        square2.classList.remove("validate");
+        square2.innerHTML = "";
       }
 
+      drawSelectedPiece(positionPiece, typePiece, square1.id);
+      square1.removeEventListener("click", square1Selected);
+    }
+
+    function square2Selected() {
+      square1.removeEventListener("click", square1Selected);
       square1.classList.remove("validate");
       square1.innerHTML = "";
       square2.classList.remove("validate");
       square2.innerHTML = "";
+
+      drawSelectedPiece(positionPiece, typePiece, square2.id);
+      square2.removeEventListener("click", square2Selected);
     }
-  } else {
-    if (
-      document
-        .getElementById(typePiece + "-" + positionPiece)
-        .classList.contains("selected")
-    ) {
-      if (firstValidateSquare !== null) {
-        firstValidateSquare[0].classList.remove("validate");
-        firstValidateSquare[1].classList.remove("validate");
-      }
 
-      square1.classList.add("validate");
-      square1.innerHTML = '<div class="val-child"></div>';
-
-      firstValidateSquare = [];
-      firstValidateSquare = [square1, square1];
-    } else {
-      if (
-        firstValidateSquare[0] === square1 &&
-        firstValidateSquare[1] === square1
-      ) {
-        firstValidateSquare = null;
-      }
-
-      square1.classList.remove("validate");
-      square1.innerHTML = "";
-    }
-  }
-
-  if (square1.classList.contains("validate")) {
-    square1.addEventListener("click", () => {
-      square1.classList.remove("validate");
-      square1.innerHTML = "";
+    if (square1.classList.contains("validate")) {
+      square1.addEventListener("click", square1Selected);
       if (square2 !== null) {
-        square2.classList.remove("validate");
-        square2.innerHTML = "";
+        square2.addEventListener("click", square2Selected);
       }
-      drawSelectedPiece(typePiece, square1.id);
-    });
-    if (square2 !== null) {
-      square2.addEventListener("click", () => {
-        drawSelectedPiece(typePiece, square2.id);
-      });
     }
   }
 }

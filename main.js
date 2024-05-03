@@ -162,7 +162,7 @@ function startPiecesPositions() {
   return pieces;
 }
 
-function setSelectedPieces(pieces, gameChessBoard) {
+function setSelectedPieces(pieces) {
   for (let notation of Object.keys(pieces)) {
     const piece = pieces[notation];
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
@@ -171,14 +171,14 @@ function setSelectedPieces(pieces, gameChessBoard) {
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
 
     selectedPiece.addEventListener("click", () =>
-      getMovements(selectedPiece, gameChessBoard)
+      getMovements(selectedPiece)
     );
   }
 }
 
-function getMovements(selectedPiece, gameChessBoard) {
+function getMovements(selectedPiece) {
   changeCellColor(selectedPiece);
-  validatePieces(selectedPiece.classList[0], selectedPiece.id, gameChessBoard);
+  validatePieces(selectedPiece.classList[0], selectedPiece.id);
 }
 
 function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
@@ -191,17 +191,20 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   const pieceSelected = document.getElementById(
     `${typePiece}-${positionPiece}`
   );
+  const pieceSelectedSquare = document.getElementById(`${positionPiece}`)
+  
+  if (pieceSelectedSquare.classList.contains("occupied")) pieceSelectedSquare.classList.remove("occupied");
 
   if (pieceSelected !== null) {
     pieceSelected.remove();
   }
 
   newSelectedPiece.addEventListener("click", () =>
-    getMovements(newSelectedPiece, null)
+    getMovements(newSelectedPiece)
   );
 }
 
-function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
+function validatePawnMovement(positionPiece, typePiece) {
   const increment = typePiece.includes("-w") ? 1 : -1;
   let verticalMovementIncrement = 0;
 
@@ -332,37 +335,37 @@ function validatePawnMovement(positionPiece, gameChessBoard, typePiece) {
   }
 }
 
-function validateRookMovement(positionPiece, gameChessBoard, typePiece) {}
+function validateRookMovement(positionPiece, typePiece) {}
 
-function validateKnightMovement(positionPiece, gameChessBoard, typePiece) {}
+function validateKnightMovement(positionPiece, typePiece) {}
 
-function validateBishopMovement(positionPiece, gameChessBoard, typePiece) {}
+function validateBishopMovement(positionPiece, typePiece) {}
 
-function validateQueenMovement(positionPiece, gameChessBoard, typePiece) {}
+function validateQueenMovement(positionPiece, typePiece) {}
 
-function validateKingMovement(positionPiece, gameChessBoard, typePiece) {}
+function validateKingMovement(positionPiece, typePiece) {}
 
-function validatePieces(typePiece, piecePosition, gameChessBoard) {
+function validatePieces(typePiece, piecePosition) {
   const positionPiece = piecePosition.replace(typePiece + "-", "");
   const pieceType = typePiece.split("-")[0];
   switch (pieceType) {
     case "pawn":
-      validatePawnMovement(positionPiece, gameChessBoard, typePiece);
+      validatePawnMovement(positionPiece, typePiece);
       break;
     case "rook":
-      validateRookMovement(positionPiece, gameChessBoard, typePiece);
+      validateRookMovement(positionPiece, typePiece);
       break;
     case "knight":
-      validateKnightMovement(positionPiece, gameChessBoard, typePiece);
+      validateKnightMovement(positionPiece, typePiece);
       break;
     case "bishop":
-      validateBishopMovement(positionPiece, gameChessBoard, typePiece);
+      validateBishopMovement(positionPiece, typePiece);
       break;
     case "queen":
-      validateQueenMovement(positionPiece, gameChessBoard, typePiece);
+      validateQueenMovement(positionPiece, typePiece);
       break;
     case "king":
-      validateKingMovement(positionPiece, gameChessBoard, typePiece);
+      validateKingMovement(positionPiece, typePiece);
       break;
 
     default:

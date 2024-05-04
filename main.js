@@ -40,7 +40,7 @@ function reverseBoard(chessBoard) {
 function createColumns(num) {
   const colContainer = document.createElement("div");
   colContainer.classList.add(
-    num !== undefined ? `colContainer${num}` : `colContainer`
+    num !== undefined ? `colContainer${num}` : `colContainer`,
   );
   colContainer.id = `colContainer${num !== undefined ? num : ""}`;
 
@@ -56,7 +56,7 @@ function createColumns(num) {
 function createRows(num) {
   const rowContainer = document.createElement("div");
   rowContainer.classList.add(
-    num !== undefined ? `rowContainer${num}` : `rowContainer`
+    num !== undefined ? `rowContainer${num}` : `rowContainer`,
   );
   rowContainer.id = `rowContainer${num !== undefined ? num : ""}`;
 
@@ -99,7 +99,7 @@ function drawBoard(chessBoardWhite, whiteBoard) {
       const square = document.createElement("div");
       square.classList.add("square");
       square.classList.add(
-        row[column] % 2 === 0 ? `${squareColor1}` : `${squareColor2}`
+        row[column] % 2 === 0 ? `${squareColor1}` : `${squareColor2}`,
       );
       square.id = column;
       board.appendChild(square);
@@ -170,9 +170,7 @@ function setSelectedPieces(pieces) {
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}"/>`;
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
 
-    selectedPiece.addEventListener("click", () =>
-      getMovements(selectedPiece)
-    );
+    selectedPiece.addEventListener("click", () => getMovements(selectedPiece));
   }
 }
 
@@ -186,22 +184,44 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   squareContainerSelected.innerHTML = `<img src="pieces/${typePiece}.svg" alt="${typePiece}" id="${typePiece}-${squareSelected}" class="${typePiece}"/>`;
   squareContainerSelected.classList.add("occupied");
   const newSelectedPiece = document.getElementById(
-    `${typePiece}-${squareSelected}`
+    `${typePiece}-${squareSelected}`,
   );
   const pieceSelected = document.getElementById(
-    `${typePiece}-${positionPiece}`
+    `${typePiece}-${positionPiece}`,
   );
-  const pieceSelectedSquare = document.getElementById(`${positionPiece}`)
-  
-  if (pieceSelectedSquare.classList.contains("occupied")) pieceSelectedSquare.classList.remove("occupied");
+  const pieceSelectedSquare = document.getElementById(`${positionPiece}`);
+
+  if (pieceSelectedSquare.classList.contains("occupied"))
+    pieceSelectedSquare.classList.remove("occupied");
 
   if (pieceSelected !== null) {
     pieceSelected.remove();
   }
 
   newSelectedPiece.addEventListener("click", () =>
-    getMovements(newSelectedPiece)
+    getMovements(newSelectedPiece),
   );
+}
+
+function setEdibleIndexes(square1) {
+  let edibleSquares = null;
+  let i = 0;
+
+  chessNotationColumns.forEach((element) => {
+    if (element === square1.id.charAt(0)) {
+      edibleSquares = [
+        document.getElementById(
+          `${chessNotationColumns[i - 1]}${square1.id.charAt(1)}`,
+        ),
+        document.getElementById(
+          `${chessNotationColumns[i + 1]}${square1.id.charAt(1)}`,
+        ),
+      ];
+    }
+    i++;
+  });
+
+  return edibleSquares;
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
@@ -238,7 +258,9 @@ function validatePawnMovement(positionPiece, typePiece) {
     square2 = square2.classList.contains("occupied") ? null : square2;
   }
 
-  console.log(square2);
+  const edibleSquares = setEdibleIndexes(square1);
+
+
 
   if (!nextSquareContent) {
     if (square2 !== null) {

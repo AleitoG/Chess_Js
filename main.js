@@ -16,7 +16,7 @@ let chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
 let originalColors = [];
 let firstSelectedElement = null;
 let firstValidateSquare = null;
-let whitePlayer = false;
+let whitePlayer = true;
 
 function reverseObject(object) {
   const keys = Object.keys(object);
@@ -201,6 +201,7 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   newSelectedPiece.addEventListener("click", () =>
     getMovements(newSelectedPiece),
   );
+
 }
 
 function setEdibleIndexes(square1) {
@@ -225,7 +226,21 @@ function setEdibleIndexes(square1) {
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
-  // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
+        // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
+  //
+      // const pieceDrag = document.getElementById('${typePiece}-${squareSelected}');
+      // const targetDrag = document.getElementById();
+      //
+      // pieceDrag .addEventListener('dragstart', function(event) {
+      //   console.log(event)
+      // })
+      // targetDrag.addEventListener('dragover', function(event) {
+      //   event.preventDefault()
+      // })
+      // targetDrag.addEventListener('drop', function(event) {
+      //   dropZone.prepend(card)
+      // })
+      //
   const increment = typePiece.includes("-w") ? 1 : -1;
   let verticalMovementIncrement = 0;
 

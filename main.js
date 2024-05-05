@@ -16,6 +16,7 @@ let chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
 let originalColors = [];
 let firstSelectedElement = null;
 let firstValidateSquare = null;
+let whitePlayer = false;
 
 function reverseObject(object) {
   const keys = Object.keys(object);
@@ -225,7 +226,7 @@ function setEdibleIndexes(square1) {
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
-  if (typePiece.includes("-b")) return;
+  if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
   const increment = typePiece.includes("-w") ? 1 : -1;
   let verticalMovementIncrement = 0;
 
@@ -419,7 +420,7 @@ function changeCellColor(element) {
 }
 
 window.onload = () => {
-  const gameChessBoard = drawBoard(chessboard, true);
+  const gameChessBoard = drawBoard(chessboard, whitePlayer);
   const gameStartPiecesPositions = startPiecesPositions();
   setSelectedPieces(gameStartPiecesPositions, gameChessBoard);
 };

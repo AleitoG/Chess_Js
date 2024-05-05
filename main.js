@@ -225,6 +225,7 @@ function setEdibleIndexes(square1) {
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
+  if (typePiece.includes("-b")) return;
   const increment = typePiece.includes("-w") ? 1 : -1;
   let verticalMovementIncrement = 0;
 
@@ -258,7 +259,7 @@ function validatePawnMovement(positionPiece, typePiece) {
     square2 = square2.classList.contains("occupied") ? null : square2;
   }
 
-  const edibleSquares = setEdibleIndexes(square1);
+  const eatableSquares = setEdibleIndexes(square1);
 
 
 

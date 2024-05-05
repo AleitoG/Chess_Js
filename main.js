@@ -168,9 +168,8 @@ function setSelectedPieces(pieces) {
     const piece = pieces[notation];
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
     piece.classList.add("occupied");
-    piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}"/>`;
+    piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}" style="user-select: none;" draggable="true"/>`;
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
-
     selectedPiece.addEventListener("click", () => getMovements(selectedPiece));
   }
 }

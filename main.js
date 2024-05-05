@@ -319,6 +319,7 @@ function remplaceUnoccupiedSquares() {
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
+  remplaceUnoccupiedSquares();
   // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
   //
   // const pieceDrag = document.getElementById('${typePiece}-${squareSelected}');
@@ -436,8 +437,6 @@ function validatePawnMovement(positionPiece, typePiece) {
         square1.innerHTML = "";
       }
     }
-
-    remplaceUnoccupiedSquares();
 
     function square1Selected() {
       square1.classList.remove("validate");

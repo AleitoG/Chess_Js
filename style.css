@@ -106,3 +106,6 @@ img {
 .pawn-b, .pawn-w{
     
 }
+.eatable {
+  background-color: #ff2c2c !important;
+}

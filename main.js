@@ -41,7 +41,7 @@ function reverseBoard(chessBoard) {
 function createColumns(num) {
   const colContainer = document.createElement("div");
   colContainer.classList.add(
-    num !== undefined ? `colContainer${num}` : `colContainer`,
+    num !== undefined ? `colContainer${num}` : `colContainer`
   );
   colContainer.id = `colContainer${num !== undefined ? num : ""}`;
 
@@ -57,7 +57,7 @@ function createColumns(num) {
 function createRows(num) {
   const rowContainer = document.createElement("div");
   rowContainer.classList.add(
-    num !== undefined ? `rowContainer${num}` : `rowContainer`,
+    num !== undefined ? `rowContainer${num}` : `rowContainer`
   );
   rowContainer.id = `rowContainer${num !== undefined ? num : ""}`;
 
@@ -100,7 +100,7 @@ function drawBoard(chessBoardWhite, whiteBoard) {
       const square = document.createElement("div");
       square.classList.add("square");
       square.classList.add(
-        row[column] % 2 === 0 ? `${squareColor1}` : `${squareColor2}`,
+        row[column] % 2 === 0 ? `${squareColor1}` : `${squareColor2}`
       );
       square.id = column;
       board.appendChild(square);
@@ -184,10 +184,10 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   squareContainerSelected.innerHTML = `<img src="pieces/${typePiece}.svg" alt="${typePiece}" id="${typePiece}-${squareSelected}" class="${typePiece}"/>`;
   squareContainerSelected.classList.add("occupied");
   const newSelectedPiece = document.getElementById(
-    `${typePiece}-${squareSelected}`,
+    `${typePiece}-${squareSelected}`
   );
   const pieceSelected = document.getElementById(
-    `${typePiece}-${positionPiece}`,
+    `${typePiece}-${positionPiece}`
   );
   const pieceSelectedSquare = document.getElementById(`${positionPiece}`);
 
@@ -199,48 +199,100 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   }
 
   newSelectedPiece.addEventListener("click", () =>
-    getMovements(newSelectedPiece),
+    getMovements(newSelectedPiece)
   );
-
 }
 
-function setEdibleIndexes(square1) {
-  let edibleSquares = null;
+function setEatableIndexes(square1) {
+  let eatableSquares = null;
   let i = 0;
 
   chessNotationColumns.forEach((element) => {
     if (element === square1.id.charAt(0)) {
-      edibleSquares = [
+      eatableSquares = [
         document.getElementById(
-          `${chessNotationColumns[i - 1]}${square1.id.charAt(1)}`,
+          `${chessNotationColumns[i - 1]}${square1.id.charAt(1)}`
         ),
         document.getElementById(
-          `${chessNotationColumns[i + 1]}${square1.id.charAt(1)}`,
+          `${chessNotationColumns[i + 1]}${square1.id.charAt(1)}`
         ),
       ];
     }
     i++;
   });
 
-  return edibleSquares;
+  return eatableSquares;
+}
+
+function checkEatablePieces(eatableSquare1, eatableSquare2, typePiece) {
+  const valOccupiedPiecesSquare1 =
+    eatableSquare1 !== null && eatableSquare1.classList.contains("occupied")
+      ? true
+      : false;
+  const valOccupiedPiecesSquare2 =
+    eatableSquare2 !== null && eatableSquare2.classList.contains("occupied")
+      ? true
+      : false;
+  const typePieceSelectedSquare1 = valOccupiedPiecesSquare1
+    ? eatableSquare1.children[0].classList[0]
+    : null;
+  const typePieceSelectedSquare2 = valOccupiedPiecesSquare2
+    ? eatableSquare2.children[0].classList[0]
+    : null;
+
+  if (
+    typePieceSelectedSquare1 !== typePiece &&
+    typePieceSelectedSquare1 !== null
+  ) {
+    eatableSquare1.classList.add("eatable");
+
+    if (
+      typePieceSelectedSquare2 !== typePiece &&
+      typePieceSelectedSquare2 !== null
+    ) {
+      eatableSquare2.classList.add("eatable");
+    }
+  } else if (
+    typePieceSelectedSquare2 !== typePiece &&
+    typePieceSelectedSquare2 !== null
+  ) {
+    eatableSquare2.classList.add("eatable");
+
+    if (
+      typePieceSelectedSquare1 !== typePiece &&
+      typePieceSelectedSquare1 !== null
+    ) {
+      eatableSquare1.classList.add("eatable");
+    }
+  }
+}
+
+function createNewSquare(tagName, attributes = {}) {
+  const element = document.createElement(tagName);
+
+  for (const [key, value] of Object.entries(attributes)) {
+    element.setAttribute(key, value);
+  }
+
+  return element;
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
-        // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
+  // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
   //
-      // const pieceDrag = document.getElementById('${typePiece}-${squareSelected}');
-      // const targetDrag = document.getElementById();
-      //
-      // pieceDrag .addEventListener('dragstart', function(event) {
-      //   console.log(event)
-      // })
-      // targetDrag.addEventListener('dragover', function(event) {
-      //   event.preventDefault()
-      // })
-      // targetDrag.addEventListener('drop', function(event) {
-      //   dropZone.prepend(card)
-      // })
-      //
+  // const pieceDrag = document.getElementById('${typePiece}-${squareSelected}');
+  // const targetDrag = document.getElementById();
+  //
+  // pieceDrag .addEventListener('dragstart', function(event) {
+  //   console.log(event)
+  // })
+  // targetDrag.addEventListener('dragover', function(event) {
+  //   event.preventDefault()
+  // })
+  // targetDrag.addEventListener('drop', function(event) {
+  //   dropZone.prepend(card)
+  // })
+  //
   const increment = typePiece.includes("-w") ? 1 : -1;
   let verticalMovementIncrement = 0;
 
@@ -274,9 +326,19 @@ function validatePawnMovement(positionPiece, typePiece) {
     square2 = square2.classList.contains("occupied") ? null : square2;
   }
 
-  const eatableSquares = setEdibleIndexes(square1);
+  chessboard.forEach((row) => {
+    Object.keys(row).forEach((column) => {
+      const checkEatableClass = document.getElementById(column);
+      if (checkEatableClass.classList.contains("eatable"))
+        checkEatableClass.classList.remove("eatable");
+    });
+  });
 
+  const eatableSquares = setEatableIndexes(square1);
+  const eatableSquare1 = eatableSquares[0];
+  const eatableSquare2 = eatableSquares[1];
 
+  checkEatablePieces(eatableSquare1, eatableSquare2, typePiece);
 
   if (!nextSquareContent) {
     if (square2 !== null) {
@@ -340,6 +402,35 @@ function validatePawnMovement(positionPiece, typePiece) {
       }
     }
 
+    chessboard.forEach((row) => {
+      Object.keys(row).forEach((column) => {
+        const squareWithEventListener = document.getElementById(column);
+        if (
+          squareWithEventListener.dataset.eventlisteners !== undefined &&
+          !squareWithEventListener.classList.contains("occupied")
+        ) {
+          let clasElements = "";
+          for (
+            let index = 0;
+            index < squareWithEventListener.classList.length;
+            index++
+          ) {
+            clasElements =
+              clasElements + squareWithEventListener.classList[index] + " ";
+          }
+
+          const board = squareWithEventListener.parentNode;
+          board.replaceChild(
+            createNewSquare("div", {
+              class: `${clasElements}`,
+              id: `${squareWithEventListener.id}`,
+            }),
+            squareWithEventListener
+          );
+        }
+      });
+    });
+
     function square1Selected() {
       square1.classList.remove("validate");
       square1.innerHTML = "";
@@ -366,8 +457,10 @@ function validatePawnMovement(positionPiece, typePiece) {
 
     if (square1.classList.contains("validate")) {
       square1.addEventListener("click", square1Selected);
+      square1.dataset.eventlisteners = "click";
       if (square2 !== null) {
         square2.addEventListener("click", square2Selected);
+        square2.dataset.eventlisteners = "click";
       }
     }
   }

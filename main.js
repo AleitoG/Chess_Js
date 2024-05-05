@@ -226,7 +226,7 @@ function setEdibleIndexes(square1) {
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
-  if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
+  // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
   const increment = typePiece.includes("-w") ? 1 : -1;
   let verticalMovementIncrement = 0;
 

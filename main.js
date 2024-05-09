@@ -170,6 +170,7 @@ function setSelectedPieces(pieces) {
     piece.classList.add("occupied");
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}" style="user-select: none;" draggable="true"/>`;
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
+    
     selectedPiece.addEventListener("click", () => getMovements(selectedPiece));
   }
 }
@@ -267,7 +268,7 @@ function checkEatablePieces(eatableSquare1, eatableSquare2, typePiece) {
   }
 }
 
-function createNewSquare(tagName, attributes = {}) {
+function createNewElement(tagName, attributes = {}) {
   const element = document.createElement(tagName);
 
   for (const [key, value] of Object.entries(attributes)) {
@@ -287,7 +288,15 @@ function desmarkEatableSquares() {
   });
 }
 
-function remplaceUnoccupiedSquares() {
+function getElementClases(piece) {
+  let clasElements = "";
+  for (let index = 0; index < piece.classList.length; index++) {
+    clasElements = clasElements + piece.classList[index] + " ";
+  }
+  return clasElements;
+}
+
+function replaceUnoccupiedSquares() {
   chessboardDefined.forEach((row) => {
     Object.keys(row).forEach((column) => {
       const squareWithEventListener = document.getElementById(column);
@@ -295,19 +304,11 @@ function remplaceUnoccupiedSquares() {
         squareWithEventListener.dataset.eventlisteners !== undefined &&
         !squareWithEventListener.classList.contains("occupied")
       ) {
-        let clasElements = "";
-        for (
-          let index = 0;
-          index < squareWithEventListener.classList.length;
-          index++
-        ) {
-          clasElements =
-            clasElements + squareWithEventListener.classList[index] + " ";
-        }
+        let clasElements = getElementClases(squareWithEventListener);
 
         const board = squareWithEventListener.parentNode;
         board.replaceChild(
-          createNewSquare("div", {
+          createNewElement("div", {
             class: `${clasElements}`,
             id: `${squareWithEventListener.id}`,
           }),
@@ -319,7 +320,7 @@ function remplaceUnoccupiedSquares() {
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
-  remplaceUnoccupiedSquares();
+  replaceUnoccupiedSquares();
   // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
   //
   // const pieceDrag = document.getElementById('${typePiece}-${squareSelected}');
@@ -486,6 +487,7 @@ function validateKingMovement(positionPiece, typePiece) {}
 function validatePieces(typePiece, piecePosition) {
   const positionPiece = piecePosition.replace(typePiece + "-", "");
   const pieceType = typePiece.split("-")[0];
+
   switch (pieceType) {
     case "pawn":
       validatePawnMovement(positionPiece, typePiece);
@@ -536,3 +538,30 @@ function changeCellColor(element) {
 const chessboardDefined = drawBoard(chessboard, whitePlayer);
 const gameStartPiecesPositions = startPiecesPositions();
 setSelectedPieces(gameStartPiecesPositions);
+
+// function setPlayersTurn(startEventListeners) {
+//   const pieces = document.querySelectorAll("img");
+//   for (let index = 0; index < pieces.length; index++) {
+//     let piece = pieces[index].classList[0];
+//     let pieceType = piece.split("-")[1];
+
+//     let squareContainer = pieces[index].parentNode;
+
+//     if (pieceType === "b") {
+//       squareContainer.replaceChild(
+//         createNewElement("img", {
+//           id: `${`${pieces[index].id}`}`,
+//           class: `${getElementClases(pieces[index])}`,
+//           src: `pieces/${piece}.svg`,
+//         }),
+//         pieces[index]
+//       );
+//       if (startEventListeners) {
+//         const selectedPiece = document.getElementById(`${pieces[index].id}`);
+//         selectedPiece.addEventListener("click", () =>
+//           getMovements(selectedPiece)
+//         );
+//       }
+//     }
+//   }
+// }

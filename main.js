@@ -170,7 +170,7 @@ function setSelectedPieces(pieces) {
     piece.classList.add("occupied");
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}" style="user-select: none;" draggable="true"/>`;
     const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
-    
+
     selectedPiece.addEventListener("click", () => getMovements(selectedPiece));
   }
 }
@@ -450,6 +450,10 @@ function validatePawnMovement(positionPiece, typePiece) {
 
       drawSelectedPiece(positionPiece, typePiece, square1.id);
       square1.removeEventListener("click", square1Selected);
+
+      let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
+      setPlayersTurn(false, typePiece.split("-")[1]);
+      setPlayersTurn(true, colorSwitch);
     }
 
     function square2Selected() {
@@ -461,6 +465,10 @@ function validatePawnMovement(positionPiece, typePiece) {
 
       drawSelectedPiece(positionPiece, typePiece, square2.id);
       square2.removeEventListener("click", square2Selected);
+
+      let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
+      setPlayersTurn(false, typePiece.split("-")[1]);
+      setPlayersTurn(true, colorSwitch);
     }
 
     if (square1.classList.contains("validate")) {
@@ -535,33 +543,60 @@ function changeCellColor(element) {
   }
 }
 
+function setPlayersTurn(startEventListeners, pieceColorType) {
+  const pieces = document.querySelectorAll("img");
+  if (pieceColorType !== undefined) {
+    for (let index = 0; index < pieces.length; index++) {
+      let piece = pieces[index].classList[0];
+      let pieceType = piece.split("-")[1];
+
+      let squareContainer = pieces[index].parentNode;
+
+      if (pieceColorType === "w") {
+        if (pieceType === "w") {
+          squareContainer.replaceChild(
+            createNewElement("img", {
+              id: `${`${pieces[index].id}`}`,
+              class: `${getElementClases(pieces[index])}`,
+              src: `pieces/${piece}.svg`,
+            }),
+            pieces[index]
+          );
+          if (startEventListeners) {
+            const selectedPiece = document.getElementById(
+              `${pieces[index].id}`
+            );
+            selectedPiece.addEventListener("click", () =>
+              getMovements(selectedPiece)
+            );
+          }
+        }
+      }
+      if (pieceColorType === "b") {
+        if (pieceType === "b") {
+          squareContainer.replaceChild(
+            createNewElement("img", {
+              id: `${`${pieces[index].id}`}`,
+              class: `${getElementClases(pieces[index])}`,
+              src: `pieces/${piece}.svg`,
+            }),
+            pieces[index]
+          );
+          if (startEventListeners) {
+            const selectedPiece = document.getElementById(
+              `${pieces[index].id}`
+            );
+            selectedPiece.addEventListener("click", () =>
+              getMovements(selectedPiece)
+            );
+          }
+        }
+      }
+    }
+  }
+}
+
 const chessboardDefined = drawBoard(chessboard, whitePlayer);
 const gameStartPiecesPositions = startPiecesPositions();
 setSelectedPieces(gameStartPiecesPositions);
-
-// function setPlayersTurn(startEventListeners) {
-//   const pieces = document.querySelectorAll("img");
-//   for (let index = 0; index < pieces.length; index++) {
-//     let piece = pieces[index].classList[0];
-//     let pieceType = piece.split("-")[1];
-
-//     let squareContainer = pieces[index].parentNode;
-
-//     if (pieceType === "b") {
-//       squareContainer.replaceChild(
-//         createNewElement("img", {
-//           id: `${`${pieces[index].id}`}`,
-//           class: `${getElementClases(pieces[index])}`,
-//           src: `pieces/${piece}.svg`,
-//         }),
-//         pieces[index]
-//       );
-//       if (startEventListeners) {
-//         const selectedPiece = document.getElementById(`${pieces[index].id}`);
-//         selectedPiece.addEventListener("click", () =>
-//           getMovements(selectedPiece)
-//         );
-//       }
-//     }
-//   }
-// }
+setPlayersTurn(false, "b");

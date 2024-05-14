@@ -190,21 +190,19 @@ function drawSavedPiecesPositions() {
     savedPiecesPositions[i] = squaresOccupied[i].children[0].id.split("-")[2];
   }
 
-  setTimeout(() => {
-    document.getElementById("main").innerHTML = "";
+  document.getElementById("main").innerHTML = "";
+  chessboardDefined = drawBoard(chessboard, !whitePlayer, reverseChessBoard);
 
-    chessboardDefined = drawBoard(chessboard, !whitePlayer, reverseChessBoard);
-    for (let i = 0; i < savedPiecesPositions.length; i++) {
-      const piece = document.getElementById(savedPiecesPositions[i]);
-      const passant =
-        document.getElementById(squaresPassant) !== null
-          ? document.getElementById(squaresPassant)
-          : null;
-      if (passant !== null) passant.classList.add("passant");
-      piece.classList.add("occupied");
-      piece.innerHTML = `<img src="pieces/${savedPieces[i]}.svg" alt="${savedPieces[i]}" id="${savedPieces[i]}-${piece.id}" class="${savedPieces[i]}" style="user-select: none;" draggable="true"/>`;
-    }
-  }, 250);
+  for (let i = 0; i < savedPiecesPositions.length; i++) {
+    const piece = document.getElementById(savedPiecesPositions[i]);
+    const passant =
+      document.getElementById(squaresPassant) !== null
+        ? document.getElementById(squaresPassant)
+        : null;
+    if (passant !== null) passant.classList.add("passant");
+    piece.classList.add("occupied");
+    piece.innerHTML = `<img src="pieces/${savedPieces[i]}.svg" alt="${savedPieces[i]}" id="${savedPieces[i]}-${piece.id}" class="${savedPieces[i]}" style="user-select: none;" draggable="true"/>`;
+  }
 }
 
 function getMovements(selectedPiece) {
@@ -427,7 +425,7 @@ function replaceUnoccupiedSquares() {
 function flipBoard(typePiece) {
   let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
   setPlayersTurn(false, typePiece.split("-")[1]);
-  drawSavedPiecesPositions();
+  setTimeout(drawSavedPiecesPositions(), 250);
   setPlayersTurn(true, colorSwitch);
 }
 

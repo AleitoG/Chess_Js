@@ -12,11 +12,15 @@ const chessboard = [
 const mainContainer = document.getElementById("main");
 
 let chessNotationColumns = ["a", "b", "c", "d", "e", "f", "g", "h"];
-let chessNotationRows = ["1", "2", "3", "4", "5", "6", "7", "8"];
+let chessNotationRows = ["8", "7", "6", "5", "4", "3", "2", "1"];
 let originalColors = [];
 let firstSelectedElement = null;
 let firstValidateSquare = null;
 let whitePlayer = true;
+let reverseChessBoard = true;
+let savedPiecesPositions = [];
+let savedPieces = [];
+let savedPiecesSquarePositions = [];
 
 function reverseObject(object) {
   const keys = Object.keys(object);
@@ -79,15 +83,19 @@ function createChessBoard() {
   return board;
 }
 
-function drawBoard(chessBoardWhite, whiteBoard) {
+function drawBoard(chessBoardWhite, whiteBoard, reverseChessBoard) {
   const chessboard = whiteBoard
     ? chessBoardWhite.reverse()
     : reverseBoard(chessBoardWhite);
   const squareColor1 = whiteBoard ? "white" : "black";
   const squareColor2 = whiteBoard ? "black" : "white";
 
-  if (!whiteBoard) chessNotationColumns.reverse();
-  if (whiteBoard) chessNotationRows.reverse();
+  if (reverseChessBoard) chessboard.reverse();
+
+  let notationSintax = [chessNotationColumns, chessNotationRows];
+
+  if (!whiteBoard) notationSintax[0].reverse();
+  if (!whiteBoard) notationSintax[1].reverse();
 
   createColumns(2);
   createRows(2);
@@ -147,31 +155,44 @@ function startPiecesPositions() {
   };
 
   let W_pawns = [];
+  let B_pawns = [];
 
   for (let index = 0; index < 8; index++) {
     W_pawns[index] = document.getElementById(`${chessNotationColumns[index]}2`);
     pieces[`pawn-w_${index + 1}`] = W_pawns[index];
-  }
 
-  let B_pawns = [];
-
-  for (let index = 0; index < 8; index++) {
     B_pawns[index] = document.getElementById(`${chessNotationColumns[index]}7`);
     pieces[`pawn-b_${index + 1}`] = B_pawns[index];
   }
 
-  return pieces;
-}
-
-function setSelectedPieces(pieces) {
   for (let notation of Object.keys(pieces)) {
     const piece = pieces[notation];
     notation = notation.includes("_") ? notation.split("_")[0] : notation;
     piece.classList.add("occupied");
     piece.innerHTML = `<img src="pieces/${notation}.svg" alt="${notation}" id="${notation}-${piece.id}" class="${notation}" style="user-select: none;" draggable="true"/>`;
-    const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
 
+    const selectedPiece = document.getElementById(`${notation}-${piece.id}`);
     selectedPiece.addEventListener("click", () => getMovements(selectedPiece));
+  }
+}
+
+function drawSavedPiecesPositions() {
+  let squaresOccupied = document.getElementsByClassName("occupied");
+  for (let i = 0; i < squaresOccupied.length; i++) {
+    savedPieces[i] =
+      squaresOccupied[i].children[0].id.split("-")[0] +
+      "-" +
+      squaresOccupied[i].children[0].id.split("-")[1];
+    savedPiecesPositions[i] = squaresOccupied[i].children[0].id.split("-")[2];
+  }
+
+  document.getElementById("main").innerHTML = "";
+  chessboardDefined = drawBoard(chessboard, !whitePlayer, reverseChessBoard);
+
+  for (let i = 0; i < savedPiecesPositions.length; i++) {
+    const piece = document.getElementById(savedPiecesPositions[i]);
+    piece.classList.add("occupied");
+    piece.innerHTML = `<img src="pieces/${savedPieces[i]}.svg" alt="${savedPieces[i]}" id="${savedPieces[i]}-${piece.id}" class="${savedPieces[i]}" style="user-select: none;" draggable="true"/>`;
   }
 }
 
@@ -453,6 +474,7 @@ function validatePawnMovement(positionPiece, typePiece) {
 
       let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
       setPlayersTurn(false, typePiece.split("-")[1]);
+      drawSavedPiecesPositions();
       setPlayersTurn(true, colorSwitch);
     }
 
@@ -468,6 +490,7 @@ function validatePawnMovement(positionPiece, typePiece) {
 
       let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
       setPlayersTurn(false, typePiece.split("-")[1]);
+      drawSavedPiecesPositions();
       setPlayersTurn(true, colorSwitch);
     }
 
@@ -596,7 +619,6 @@ function setPlayersTurn(startEventListeners, pieceColorType) {
   }
 }
 
-const chessboardDefined = drawBoard(chessboard, whitePlayer);
-const gameStartPiecesPositions = startPiecesPositions();
-setSelectedPieces(gameStartPiecesPositions);
+let chessboardDefined = drawBoard(chessboard, whitePlayer, !reverseChessBoard);
+startPiecesPositions();
 setPlayersTurn(false, "b");

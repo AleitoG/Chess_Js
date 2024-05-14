@@ -178,6 +178,10 @@ function startPiecesPositions() {
 
 function drawSavedPiecesPositions() {
   let squaresOccupied = document.getElementsByClassName("occupied");
+  let squaresPassant =
+    document.getElementsByClassName("passant").length !== 0
+      ? document.getElementsByClassName("passant")[0].id
+      : null;
   for (let i = 0; i < squaresOccupied.length; i++) {
     savedPieces[i] =
       squaresOccupied[i].children[0].id.split("-")[0] +
@@ -191,6 +195,11 @@ function drawSavedPiecesPositions() {
 
   for (let i = 0; i < savedPiecesPositions.length; i++) {
     const piece = document.getElementById(savedPiecesPositions[i]);
+    const passant =
+      document.getElementById(squaresPassant) !== null
+        ? document.getElementById(squaresPassant)
+        : null;
+    if (passant !== null) passant.classList.add("passant");
     piece.classList.add("occupied");
     piece.innerHTML = `<img src="pieces/${savedPieces[i]}.svg" alt="${savedPieces[i]}" id="${savedPieces[i]}-${piece.id}" class="${savedPieces[i]}" style="user-select: none;" draggable="true"/>`;
   }
@@ -287,6 +296,69 @@ function checkEatablePieces(eatableSquare1, eatableSquare2, typePiece) {
       eatableSquare1.classList.add("eatable");
     }
   }
+
+  if (eatableSquare1 !== null && eatableSquare1.classList.contains("passant")) {
+    eatableSquare1.classList.add("eatable");
+  } else if (
+    eatableSquare2 !== null &&
+    eatableSquare2.classList.contains("passant")
+  ) {
+    eatableSquare2.classList.add("eatable");
+  }
+
+  let eatable = setEatableEventListeners(typePiece);
+  return eatable;
+}
+
+function setEatableEventListeners(typePiece) {
+  let eatableElements = document.getElementsByClassName("eatable");
+  for (let index = 0; index < eatableElements.length; index++) {
+    eatableElements[index].addEventListener("click", () => {
+      let child = eatableElements[index].hasChildNodes()
+        ? eatableElements[index].childNodes[0]
+        : null;
+      if (child !== null) {
+        eatableElements[index].replaceChild(
+          createNewElement("img", {
+            class: `${typePiece}`,
+            id: `${typePiece + "-" + child.id.split("-")[2]}`,
+            src: `pieces/${typePiece}.svg`,
+          }),
+          child
+        );
+
+        let selectedElements = document.getElementsByClassName("selected");
+        for (let index = 0; index < selectedElements.length; index++) {
+          selectedElements[index].parentNode.classList.remove("occupied");
+          selectedElements[index].remove();
+        }
+        flipBoard(typePiece);
+        return true;
+      } else {
+        eatableElements[index].appendChild(
+          createNewElement("img", {
+            class: `${typePiece}`,
+            id: `${typePiece + "-" + eatableElements[index].id}`,
+            src: `pieces/${typePiece}.svg`,
+          })
+        );
+        eatableElements[index].classList.add("occupied");
+
+        let passantPiece = document.getElementById(`${eatableElements[index].id.charAt(0)}${parseInt(eatableElements[index].id.charAt(1)) + 1}`)
+        passantPiece.classList.remove("occupied");
+        passantPiece.innerHTML = "";
+
+        let selectedElements = document.getElementsByClassName("selected");
+        for (let index = 0; index < selectedElements.length; index++) {
+          selectedElements[index].parentNode.classList.remove("occupied");
+          selectedElements[index].remove();
+        }
+
+        flipBoard(typePiece);
+        return true;
+      }
+    });
+  }
 }
 
 function createNewElement(tagName, attributes = {}) {
@@ -323,7 +395,8 @@ function replaceUnoccupiedSquares() {
       const squareWithEventListener = document.getElementById(column);
       if (
         squareWithEventListener.dataset.eventlisteners !== undefined &&
-        !squareWithEventListener.classList.contains("occupied")
+        !squareWithEventListener.classList.contains("occupied") &&
+        !squareWithEventListener.classList.contains("passant")
       ) {
         let clasElements = getElementClases(squareWithEventListener);
 
@@ -340,8 +413,16 @@ function replaceUnoccupiedSquares() {
   });
 }
 
+function flipBoard(typePiece) {
+  let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
+  setPlayersTurn(false, typePiece.split("-")[1]);
+  drawSavedPiecesPositions();
+  setPlayersTurn(true, colorSwitch);
+}
+
 function validatePawnMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
+  desmarkEatableSquares();
   // if ( whitePlayer ? typePiece.includes("-b") : typePiece.includes("-w")) return;
   //
   // const pieceDrag = document.getElementById('${typePiece}-${squareSelected}');
@@ -390,15 +471,13 @@ function validatePawnMovement(positionPiece, typePiece) {
     square2 = square2.classList.contains("occupied") ? null : square2;
   }
 
-  desmarkEatableSquares();
-
   const eatableSquares = setEatableIndexes(square1);
   const eatableSquare1 = eatableSquares[0];
   const eatableSquare2 = eatableSquares[1];
 
-  checkEatablePieces(eatableSquare1, eatableSquare2, typePiece);
+  let eatable = checkEatablePieces(eatableSquare1, eatableSquare2, typePiece);
 
-  if (!nextSquareContent) {
+  if (!nextSquareContent && !eatable) {
     if (square2 !== null) {
       if (
         document
@@ -472,10 +551,7 @@ function validatePawnMovement(positionPiece, typePiece) {
       drawSelectedPiece(positionPiece, typePiece, square1.id);
       square1.removeEventListener("click", square1Selected);
 
-      let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
-      setPlayersTurn(false, typePiece.split("-")[1]);
-      drawSavedPiecesPositions();
-      setPlayersTurn(true, colorSwitch);
+      flipBoard(typePiece);
     }
 
     function square2Selected() {
@@ -487,11 +563,9 @@ function validatePawnMovement(positionPiece, typePiece) {
 
       drawSelectedPiece(positionPiece, typePiece, square2.id);
       square2.removeEventListener("click", square2Selected);
+      square1.classList.add("passant");
 
-      let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
-      setPlayersTurn(false, typePiece.split("-")[1]);
-      drawSavedPiecesPositions();
-      setPlayersTurn(true, colorSwitch);
+      flipBoard(typePiece);
     }
 
     if (square1.classList.contains("validate")) {
@@ -503,6 +577,14 @@ function validatePawnMovement(positionPiece, typePiece) {
       }
     }
   }
+
+  chessboardDefined.forEach((row) => {
+    Object.keys(row).forEach((column) => {
+      const checkPassantClass = document.getElementById(column);
+      if (checkPassantClass.classList.contains("passant"))
+        checkPassantClass.classList.remove("passant");
+    });
+  });
 }
 
 function validateRookMovement(positionPiece, typePiece) {}

@@ -103,9 +103,6 @@ img {
   width: 15%;
   height: 15%;
 }
-.pawn-b, .pawn-w{
-    
-}
 .eatable {
-  background-color: #ff2c2c !important;
+  background-color: #d36b50 !important;
 }

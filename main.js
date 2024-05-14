@@ -343,8 +343,17 @@ function setEatableEventListeners(typePiece) {
           })
         );
         eatableElements[index].classList.add("occupied");
-
-        let passantPiece = document.getElementById(`${eatableElements[index].id.charAt(0)}${parseInt(eatableElements[index].id.charAt(1)) + 1}`)
+        let passantPiece = !typePiece.includes("-w")
+          ? document.getElementById(
+              `${eatableElements[index].id.charAt(0)}${
+                parseInt(eatableElements[index].id.charAt(1)) + 1
+              }`
+            )
+          : document.getElementById(
+              `${eatableElements[index].id.charAt(0)}${
+                parseInt(eatableElements[index].id.charAt(1)) - 1
+              }`
+            );
         passantPiece.classList.remove("occupied");
         passantPiece.innerHTML = "";
 

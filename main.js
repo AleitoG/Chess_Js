@@ -784,10 +784,8 @@ function validateRookMovement(positionPiece, typePiece) {
     const charIncrement = horizontalSquares[index];
 
     if (square !== null)
-      unOccupiedSquares[index] = checkIncrementedSquares(
-        square,
-        increment,
-        charIncrement,
+      unOccupiedSquares.push(
+        checkIncrementedSquares(square, increment, charIncrement),
       );
   }
 
@@ -799,6 +797,8 @@ function validateRookMovement(positionPiece, typePiece) {
     removeValidatedSquares();
 
     firstValidatedElementS = [];
+
+    console.log(unOccupiedSquares);
 
     for (let index = 0; index < unOccupiedSquares.length; index++) {
       if (unOccupiedSquares[index].length !== 0) {

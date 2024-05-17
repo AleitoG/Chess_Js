@@ -314,21 +314,15 @@ function checkCompassSquares(positionPiece, typePiece) {
     `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) - 1}`
   );
 
-  const compassSquares = [upSquare, rightSquare, leftSquare, downSquare];
+  const validSquares = [upSquare, rightSquare, leftSquare, downSquare];
   const icrementSquares = [1, null, null, -1];
   const charIncrementSquares = [null, 1, -1, null];
   let increment = [];
   let charIncrement = [];
 
-  const validSquares = compassSquares.filter((square) => {
-    return square !== null && !square.classList.contains("occupied");
-  });
-
-  for (let index = 0; index < compassSquares.length; index++) {
-    if (compassSquares[index] === validSquares[index]) {
-      increment[index] = icrementSquares[index];
-      charIncrement[index] = charIncrementSquares[index];
-    }
+  for (let index = 0; index < validSquares.length; index++) {
+    increment[index] = icrementSquares[index];
+    charIncrement[index] = charIncrementSquares[index];
   }
 
   return [validSquares, increment, charIncrement];
@@ -352,12 +346,8 @@ function checkIncrementedSquares(square, increment, charIncrement) {
     if (increment === 1) {
       for (let index = parseInt(square.id.charAt(1)); index <= 8; index++) {
         object =
-          document.getElementById(
-            `${square.id.charAt(0)}${index}`
-          ) !== null
-            ? document.getElementById(
-                `${square.id.charAt(0)}${index}`
-              )
+          document.getElementById(`${square.id.charAt(0)}${index}`) !== null
+            ? document.getElementById(`${square.id.charAt(0)}${index}`)
             : document.getElementById(
                 `${square.id.charAt(0)}${square.id.charAt(1)}`
               );
@@ -365,25 +355,21 @@ function checkIncrementedSquares(square, increment, charIncrement) {
         unOccupiedSquares[index - parseInt(square.id.charAt(1))] =
           object.classList.contains("occupied") ? null : object;
       }
-    }
-    else if (increment === -1) {
+    } else if (increment === -1) {
       let i = 0;
 
       for (let index = parseInt(square.id.charAt(1)); index >= 1; index--) {
         object =
-          document.getElementById(
-            `${square.id.charAt(0)}${index}`
-          ) !== null
-            ? document.getElementById(
-                `${square.id.charAt(0)}${index}`
-              )
+          document.getElementById(`${square.id.charAt(0)}${index}`) !== null
+            ? document.getElementById(`${square.id.charAt(0)}${index}`)
             : document.getElementById(
                 `${square.id.charAt(0)}${square.id.charAt(1)}`
               );
 
-        unOccupiedSquares[i] =
-          object.classList.contains("occupied") ? null : object;
-          i++;
+        unOccupiedSquares[i] = object.classList.contains("occupied")
+          ? null
+          : object;
+        i++;
       }
     }
   }
@@ -403,32 +389,29 @@ function checkIncrementedSquares(square, increment, charIncrement) {
                 `${square.id.charAt(0)}${square.id.charAt(1)}`
               );
 
-        unOccupiedSquares[i] =
-          object.classList.contains("occupied") ? null : object;
-          i++;
+        unOccupiedSquares[i] = object.classList.contains("occupied")
+          ? null
+          : object;
+        i++;
       }
-    }
-    else if (charIncrement === -1) {
+    } else if (charIncrement === -1) {
       let i = 0;
       for (let index = square.id.charCodeAt(0); index >= 97; index--) {
         object =
           document.getElementById(
-            `${String.fromCharCode(index)}${square.id.charAt(
-              1
-            )}`
+            `${String.fromCharCode(index)}${square.id.charAt(1)}`
           ) !== null
             ? document.getElementById(
-                `${String.fromCharCode(
-                  index
-                )}${square.id.charAt(1)}`
+                `${String.fromCharCode(index)}${square.id.charAt(1)}`
               )
             : document.getElementById(
                 `${square.id.charAt(0)}${square.id.charAt(1)}`
               );
 
-        unOccupiedSquares[i] =
-          object.classList.contains("occupied") ? null : object;
-          i++;
+        unOccupiedSquares[i] = object.classList.contains("occupied")
+          ? null
+          : object;
+        i++;
       }
     }
   }
@@ -461,7 +444,12 @@ function validatePawnMovement(positionPiece, typePiece) {
     return eatableSquares;
   }
 
-  function checkEatablePieces(eatableSquare1, eatableSquare2, typePiece) {
+  function checkEatablePieces(
+    eatableSquare1,
+    eatableSquare2,
+    typePiece,
+    piceId
+  ) {
     const valOccupiedPiecesSquare1 =
       eatableSquare1 !== null && eatableSquare1.classList.contains("occupied")
         ? true
@@ -508,9 +496,23 @@ function validatePawnMovement(positionPiece, typePiece) {
       eatableSquare1.classList.contains("passant")
     ) {
       eatableSquare1.classList.add("eatable");
+      eatableSquare1.classList.add(`eatablePassant-${piceId}`);
     } else if (
       eatableSquare2 !== null &&
       eatableSquare2.classList.contains("passant")
+    ) {
+      eatableSquare2.classList.add("eatable");
+      eatableSquare2.classList.add(`eatablePassant-${piceId}`);
+    }
+
+    if (
+      eatableSquare1 !== null &&
+      eatableSquare1.classList.contains(`eatablePassant-${piceId}`)
+    ) {
+      eatableSquare1.classList.add("eatable");
+    } else if (
+      eatableSquare2 !== null &&
+      eatableSquare2.classList.contains(`eatablePassant-${piceId}`)
     ) {
       eatableSquare2.classList.add("eatable");
     }
@@ -631,7 +633,12 @@ function validatePawnMovement(positionPiece, typePiece) {
   const eatableSquare1 = eatableSquares[0];
   const eatableSquare2 = eatableSquares[1];
 
-  let eatable = checkEatablePieces(eatableSquare1, eatableSquare2, typePiece);
+  let eatable = checkEatablePieces(
+    eatableSquare1,
+    eatableSquare2,
+    typePiece,
+    positionPiece
+  );
 
   if (!nextSquareContent && !eatable) {
     if (square2 !== null) {
@@ -741,12 +748,14 @@ function validatePawnMovement(positionPiece, typePiece) {
         checkPassantClass.classList.remove("passant");
     });
   });
+
+  console.log("holas");
 }
 
 function validateRookMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
   desmarkEatableSquares();
-  
+
   const compassSquares = checkCompassSquares(
     positionPiece,
     typePiece.split("-")[1]
@@ -762,7 +771,7 @@ function validateRookMovement(positionPiece, typePiece) {
     const charIncrement = horizontalSquares[index];
 
     if (square !== null)
-      console.log(checkIncrementedSquares(square, increment, charIncrement));;
+      console.log(checkIncrementedSquares(square, increment, charIncrement));
   }
 }
 

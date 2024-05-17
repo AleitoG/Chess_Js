@@ -46,7 +46,7 @@ function reverseBoard(chessBoard) {
 function createColumns(num) {
   const colContainer = document.createElement("div");
   colContainer.classList.add(
-    num !== undefined ? `colContainer${num}` : `colContainer`
+    num !== undefined ? `colContainer${num}` : `colContainer`,
   );
   colContainer.id = `colContainer${num !== undefined ? num : ""}`;
 
@@ -62,7 +62,7 @@ function createColumns(num) {
 function createRows(num) {
   const rowContainer = document.createElement("div");
   rowContainer.classList.add(
-    num !== undefined ? `rowContainer${num}` : `rowContainer`
+    num !== undefined ? `rowContainer${num}` : `rowContainer`,
   );
   rowContainer.id = `rowContainer${num !== undefined ? num : ""}`;
 
@@ -109,7 +109,7 @@ function drawBoard(chessBoardWhite, whiteBoard, reverseChessBoard) {
       const square = document.createElement("div");
       square.classList.add("square");
       square.classList.add(
-        row[column] % 2 === 0 ? `${squareColor1}` : `${squareColor2}`
+        row[column] % 2 === 0 ? `${squareColor1}` : `${squareColor2}`,
       );
       square.id = column;
       board.appendChild(square);
@@ -216,10 +216,10 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   squareContainerSelected.innerHTML = `<img src="pieces/${typePiece}.svg" alt="${typePiece}" id="${typePiece}-${squareSelected}" class="${typePiece}"/>`;
   squareContainerSelected.classList.add("occupied");
   const newSelectedPiece = document.getElementById(
-    `${typePiece}-${squareSelected}`
+    `${typePiece}-${squareSelected}`,
   );
   const pieceSelected = document.getElementById(
-    `${typePiece}-${positionPiece}`
+    `${typePiece}-${positionPiece}`,
   );
   const pieceSelectedSquare = document.getElementById(`${positionPiece}`);
 
@@ -231,7 +231,7 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   }
 
   newSelectedPiece.addEventListener("click", () =>
-    getMovements(newSelectedPiece)
+    getMovements(newSelectedPiece),
   );
 }
 
@@ -280,7 +280,7 @@ function replaceUnoccupiedSquares() {
             class: `${clasElements}`,
             id: `${squareWithEventListener.id}`,
           }),
-          squareWithEventListener
+          squareWithEventListener,
         );
       }
     });
@@ -296,23 +296,23 @@ function flipBoard(typePiece) {
 
 function checkCompassSquares(positionPiece, typePiece) {
   const upSquare = document.getElementById(
-    `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) + 1}`
+    `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) + 1}`,
   );
 
   const rightSquare = document.getElementById(
     `${String.fromCharCode(
-      positionPiece.charCodeAt(0) + 1
-    )}${positionPiece.charAt(1)}`
+      positionPiece.charCodeAt(0) + 1,
+    )}${positionPiece.charAt(1)}`,
   );
 
   const leftSquare = document.getElementById(
     `${String.fromCharCode(
-      positionPiece.charCodeAt(0) - 1
-    )}${positionPiece.charAt(1)}`
+      positionPiece.charCodeAt(0) - 1,
+    )}${positionPiece.charAt(1)}`,
   );
 
   const downSquare = document.getElementById(
-    `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) - 1}`
+    `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) - 1}`,
   );
 
   const validSquares = [upSquare, rightSquare, leftSquare, downSquare];
@@ -350,7 +350,7 @@ function checkIncrementedSquares(square, increment, charIncrement) {
           document.getElementById(`${square.id.charAt(0)}${index}`) !== null
             ? document.getElementById(`${square.id.charAt(0)}${index}`)
             : document.getElementById(
-                `${square.id.charAt(0)}${square.id.charAt(1)}`
+                `${square.id.charAt(0)}${square.id.charAt(1)}`,
               );
 
         unOccupiedSquares[index - parseInt(square.id.charAt(1))] =
@@ -364,7 +364,7 @@ function checkIncrementedSquares(square, increment, charIncrement) {
           document.getElementById(`${square.id.charAt(0)}${index}`) !== null
             ? document.getElementById(`${square.id.charAt(0)}${index}`)
             : document.getElementById(
-                `${square.id.charAt(0)}${square.id.charAt(1)}`
+                `${square.id.charAt(0)}${square.id.charAt(1)}`,
               );
 
         unOccupiedSquares[i] = object.classList.contains("occupied")
@@ -381,13 +381,13 @@ function checkIncrementedSquares(square, increment, charIncrement) {
       for (let index = square.id.charCodeAt(0); index <= 104; index++) {
         object =
           document.getElementById(
-            `${String.fromCharCode(index)}${square.id.charAt(1)}`
+            `${String.fromCharCode(index)}${square.id.charAt(1)}`,
           ) !== null
             ? document.getElementById(
-                `${String.fromCharCode(index)}${square.id.charAt(1)}`
+                `${String.fromCharCode(index)}${square.id.charAt(1)}`,
               )
             : document.getElementById(
-                `${square.id.charAt(0)}${square.id.charAt(1)}`
+                `${square.id.charAt(0)}${square.id.charAt(1)}`,
               );
 
         unOccupiedSquares[i] = object.classList.contains("occupied")
@@ -400,13 +400,13 @@ function checkIncrementedSquares(square, increment, charIncrement) {
       for (let index = square.id.charCodeAt(0); index >= 97; index--) {
         object =
           document.getElementById(
-            `${String.fromCharCode(index)}${square.id.charAt(1)}`
+            `${String.fromCharCode(index)}${square.id.charAt(1)}`,
           ) !== null
             ? document.getElementById(
-                `${String.fromCharCode(index)}${square.id.charAt(1)}`
+                `${String.fromCharCode(index)}${square.id.charAt(1)}`,
               )
             : document.getElementById(
-                `${square.id.charAt(0)}${square.id.charAt(1)}`
+                `${square.id.charAt(0)}${square.id.charAt(1)}`,
               );
 
         unOccupiedSquares[i] = object.classList.contains("occupied")
@@ -435,7 +435,7 @@ function removeValidatedSquares() {
 function validatePawnMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
   desmarkEatableSquares();
-  removeValidatedSquares()
+  removeValidatedSquares();
 
   function setEatableIndexes(square1) {
     let eatableSquares = null;
@@ -445,10 +445,10 @@ function validatePawnMovement(positionPiece, typePiece) {
       if (element === square1.id.charAt(0)) {
         eatableSquares = [
           document.getElementById(
-            `${chessNotationColumns[i - 1]}${square1.id.charAt(1)}`
+            `${chessNotationColumns[i - 1]}${square1.id.charAt(1)}`,
           ),
           document.getElementById(
-            `${chessNotationColumns[i + 1]}${square1.id.charAt(1)}`
+            `${chessNotationColumns[i + 1]}${square1.id.charAt(1)}`,
           ),
         ];
       }
@@ -462,7 +462,7 @@ function validatePawnMovement(positionPiece, typePiece) {
     eatableSquare1,
     eatableSquare2,
     typePiece,
-    piceId
+    piceId,
   ) {
     const valOccupiedPiecesSquare1 =
       eatableSquare1 !== null && eatableSquare1.classList.contains("occupied")
@@ -549,7 +549,7 @@ function validatePawnMovement(positionPiece, typePiece) {
               id: `${typePiece + "-" + child.id.split("-")[2]}`,
               src: `pieces/${typePiece}.svg`,
             }),
-            child
+            child,
           );
 
           let selectedElements = document.getElementsByClassName("selected");
@@ -565,19 +565,19 @@ function validatePawnMovement(positionPiece, typePiece) {
               class: `${typePiece}`,
               id: `${typePiece + "-" + eatableElements[index].id}`,
               src: `pieces/${typePiece}.svg`,
-            })
+            }),
           );
           eatableElements[index].classList.add("occupied");
           let passantPiece = !typePiece.includes("-w")
             ? document.getElementById(
                 `${eatableElements[index].id.charAt(0)}${
                   parseInt(eatableElements[index].id.charAt(1)) + 1
-                }`
+                }`,
               )
             : document.getElementById(
                 `${eatableElements[index].id.charAt(0)}${
                   parseInt(eatableElements[index].id.charAt(1)) - 1
-                }`
+                }`,
               );
           passantPiece.classList.remove("occupied");
           passantPiece.innerHTML = "";
@@ -651,7 +651,7 @@ function validatePawnMovement(positionPiece, typePiece) {
     eatableSquare1,
     eatableSquare2,
     typePiece,
-    positionPiece
+    positionPiece,
   );
 
   if (!nextSquareContent && !eatable) {
@@ -770,7 +770,7 @@ function validateRookMovement(positionPiece, typePiece) {
 
   const compassSquares = checkCompassSquares(
     positionPiece,
-    typePiece.split("-")[1]
+    typePiece.split("-")[1],
   );
 
   const availableSquares = compassSquares[0];
@@ -787,7 +787,7 @@ function validateRookMovement(positionPiece, typePiece) {
       unOccupiedSquares[index] = checkIncrementedSquares(
         square,
         increment,
-        charIncrement
+        charIncrement,
       );
   }
 
@@ -796,7 +796,7 @@ function validateRookMovement(positionPiece, typePiece) {
       .getElementById(typePiece + "-" + positionPiece)
       .classList.contains("selected")
   ) {
-    removeValidatedSquares()
+    removeValidatedSquares();
 
     firstValidatedElementS = [];
 
@@ -809,27 +809,31 @@ function validateRookMovement(positionPiece, typePiece) {
         });
       }
     }
-  } 
+  }
 }
 
 function validateKnightMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
   desmarkEatableSquares();
+  removeValidatedSquares();
 }
 
 function validateBishopMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
   desmarkEatableSquares();
+  removeValidatedSquares();
 }
 
 function validateQueenMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
   desmarkEatableSquares();
+  removeValidatedSquares();
 }
 
 function validateKingMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
   desmarkEatableSquares();
+  removeValidatedSquares();
 }
 
 function validatePieces(typePiece, piecePosition) {
@@ -900,14 +904,14 @@ function setPlayersTurn(startEventListeners, pieceColorType) {
               class: `${getElementClases(pieces[index])}`,
               src: `pieces/${piece}.svg`,
             }),
-            pieces[index]
+            pieces[index],
           );
           if (startEventListeners) {
             const selectedPiece = document.getElementById(
-              `${pieces[index].id}`
+              `${pieces[index].id}`,
             );
             selectedPiece.addEventListener("click", () =>
-              getMovements(selectedPiece)
+              getMovements(selectedPiece),
             );
           }
         }
@@ -920,14 +924,14 @@ function setPlayersTurn(startEventListeners, pieceColorType) {
               class: `${getElementClases(pieces[index])}`,
               src: `pieces/${piece}.svg`,
             }),
-            pieces[index]
+            pieces[index],
           );
           if (startEventListeners) {
             const selectedPiece = document.getElementById(
-              `${pieces[index].id}`
+              `${pieces[index].id}`,
             );
             selectedPiece.addEventListener("click", () =>
-              getMovements(selectedPiece)
+              getMovements(selectedPiece),
             );
           }
         }

@@ -16,6 +16,7 @@ let chessNotationRows = ["8", "7", "6", "5", "4", "3", "2", "1"];
 let originalColors = [];
 let firstSelectedElement = null;
 let firstValidateSquare = null;
+let firstValidatedElementS = null;
 let whitePlayer = true;
 let reverseChessBoard = true;
 let savedPiecesPositions = [];
@@ -419,9 +420,22 @@ function checkIncrementedSquares(square, increment, charIncrement) {
   return filterUntilNull(unOccupiedSquares);
 }
 
+function removeValidatedSquares() {
+  if (firstValidatedElementS !== null) {
+    chessboardDefined.forEach((row) => {
+      Object.keys(row).forEach((column) => {
+        const checkValidateClass = document.getElementById(column);
+        if (checkValidateClass.classList.contains("validate"))
+          checkValidateClass.classList.remove("validate");
+      });
+    });
+  }
+}
+
 function validatePawnMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares();
   desmarkEatableSquares();
+  removeValidatedSquares()
 
   function setEatableIndexes(square1) {
     let eatableSquares = null;
@@ -748,8 +762,6 @@ function validatePawnMovement(positionPiece, typePiece) {
         checkPassantClass.classList.remove("passant");
     });
   });
-
-  console.log("holas");
 }
 
 function validateRookMovement(positionPiece, typePiece) {
@@ -764,6 +776,7 @@ function validateRookMovement(positionPiece, typePiece) {
   const availableSquares = compassSquares[0];
   const verticalSquares = compassSquares[1];
   const horizontalSquares = compassSquares[2];
+  let unOccupiedSquares = [];
 
   for (let index = 0; index < availableSquares.length; index++) {
     const square = availableSquares[index];
@@ -771,8 +784,32 @@ function validateRookMovement(positionPiece, typePiece) {
     const charIncrement = horizontalSquares[index];
 
     if (square !== null)
-      console.log(checkIncrementedSquares(square, increment, charIncrement));
+      unOccupiedSquares[index] = checkIncrementedSquares(
+        square,
+        increment,
+        charIncrement
+      );
   }
+
+  if (
+    document
+      .getElementById(typePiece + "-" + positionPiece)
+      .classList.contains("selected")
+  ) {
+    removeValidatedSquares()
+
+    firstValidatedElementS = [];
+
+    for (let index = 0; index < unOccupiedSquares.length; index++) {
+      if (unOccupiedSquares[index].length !== 0) {
+        unOccupiedSquares[index].forEach((square) => {
+          square.classList.add("validate"),
+            (square.innerHTML = '<div class="val-child"></div>');
+          firstValidatedElementS.push(square);
+        });
+      }
+    }
+  } 
 }
 
 function validateKnightMovement(positionPiece, typePiece) {

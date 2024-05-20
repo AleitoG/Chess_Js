@@ -299,7 +299,7 @@ function flipBoard(typePiece) {
   setPlayersTurn(true, colorSwitch);
 }
 
-function checkCompassSquares(positionPiece, typePiece) {
+function checkCompassSquares(positionPiece) {
   const upSquare = document.getElementById(
     `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) + 1}`
   );
@@ -343,10 +343,11 @@ function filterUntilNull(arr) {
   return result;
 }
 
-function checkIncrementedSquares(square, increment, charIncrement) {
+function checkIncrementedSquares(square, increment, charIncrement, typePiece) {
   let unOccupiedSquares = [];
-
+  let eatableSquares = [];
   let object;
+  let count = 0;
 
   if (increment !== null) {
     if (increment === 1) {
@@ -360,6 +361,17 @@ function checkIncrementedSquares(square, increment, charIncrement) {
 
         unOccupiedSquares[index - parseInt(square.id.charAt(1))] =
           object.classList.contains("occupied") ? null : object;
+
+        if (
+          object.classList.contains("occupied") &&
+          object !== null &&
+          count === 0
+        ) {
+          if (!object.childNodes[0].classList[0].includes(typePiece)) {
+            eatableSquares.push(object);
+          }
+          count++;
+        }
       }
     } else if (increment === -1) {
       let i = 0;
@@ -375,6 +387,16 @@ function checkIncrementedSquares(square, increment, charIncrement) {
         unOccupiedSquares[i] = object.classList.contains("occupied")
           ? null
           : object;
+        if (
+          object.classList.contains("occupied") &&
+          object !== null &&
+          count === 0
+        ) {
+          if (!object.childNodes[0].classList[0].includes(typePiece)) {
+            eatableSquares.push(object);
+          }
+          count++;
+        }
         i++;
       }
     }
@@ -398,6 +420,16 @@ function checkIncrementedSquares(square, increment, charIncrement) {
         unOccupiedSquares[i] = object.classList.contains("occupied")
           ? null
           : object;
+        if (
+          object.classList.contains("occupied") &&
+          object !== null &&
+          count === 0
+        ) {
+          if (!object.childNodes[0].classList[0].includes(typePiece)) {
+            eatableSquares.push(object);
+          }
+          count++;
+        }
         i++;
       }
     } else if (charIncrement === -1) {
@@ -417,12 +449,23 @@ function checkIncrementedSquares(square, increment, charIncrement) {
         unOccupiedSquares[i] = object.classList.contains("occupied")
           ? null
           : object;
+        if (
+          object.classList.contains("occupied") &&
+          object !== null &&
+          count === 0
+        ) {
+          if (!object.childNodes[0].classList[0].includes(typePiece)) {
+            eatableSquares.push(object);
+            // count++; para poder saltar piezas --> para el caballo
+          }
+          count++;
+        }
         i++;
       }
     }
   }
 
-  return filterUntilNull(unOccupiedSquares);
+  return [filterUntilNull(unOccupiedSquares), eatableSquares];
 }
 
 function removeValidatedSquares() {
@@ -446,6 +489,75 @@ function removeValidatedSquares() {
           );
         }
       });
+    });
+  }
+}
+
+function validateRookSquares(positionPiece, typePiece) {
+  const compassSquares = checkCompassSquares(positionPiece);
+
+  const availableSquares = compassSquares[0];
+  const verticalSquares = compassSquares[1];
+  const horizontalSquares = compassSquares[2];
+  let checkIncrementedSquaresArr = 0;
+  let unOccupiedSquares = [];
+  let eatableSquares = [];
+
+  for (let index = 0; index < availableSquares.length; index++) {
+    const square = availableSquares[index];
+    const increment = verticalSquares[index];
+    const charIncrement = horizontalSquares[index];
+
+    if (square !== null) {
+      checkIncrementedSquaresArr = checkIncrementedSquares(
+        square,
+        increment,
+        charIncrement,
+        `-${typePiece.split("-")[1]}`
+      );
+
+      unOccupiedSquares.push(checkIncrementedSquaresArr[0]);
+      eatableSquares.push(checkIncrementedSquaresArr[1]);
+    }
+  }
+
+  if (
+    document
+      .getElementById(typePiece + "-" + positionPiece)
+      .classList.contains("selected")
+  ) {
+    firstValidatedElementS = [];
+
+    for (let index = 0; index < unOccupiedSquares.length; index++) {
+      if (unOccupiedSquares[index].length !== 0) {
+        unOccupiedSquares[index].forEach((square) => {
+          square.classList.add("validate");
+          square.innerHTML = '<div class="val-child"></div>';
+
+          square.addEventListener("click", () => {
+            drawSelectedPiece(positionPiece, typePiece, square.id);
+            flipBoard(typePiece);
+          });
+
+          firstValidatedElementS.push(square);
+        });
+      }
+    }
+
+    eatableSquares.forEach((eatableSquare) => {
+      if (eatableSquare.length !== 0) {
+        for (let index = 0; index < eatableSquare.length; index++) {
+          eatableSquare[index].classList.add("eatable");
+          eatableSquare[index].addEventListener("click", () => {
+            drawSelectedPiece(
+              positionPiece,
+              typePiece,
+              eatableSquare[index].id
+            );
+            flipBoard(typePiece);
+          });
+        }
+      }
     });
   }
 }
@@ -796,51 +908,7 @@ function validateRookMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares(typePiece);
   desmarkEatableSquares();
   removeValidatedSquares();
-
-  const compassSquares = checkCompassSquares(
-    positionPiece,
-    typePiece.split("-")[1]
-  );
-
-  const availableSquares = compassSquares[0];
-  const verticalSquares = compassSquares[1];
-  const horizontalSquares = compassSquares[2];
-  let unOccupiedSquares = [];
-
-  for (let index = 0; index < availableSquares.length; index++) {
-    const square = availableSquares[index];
-    const increment = verticalSquares[index];
-    const charIncrement = horizontalSquares[index];
-
-    if (square !== null)
-      unOccupiedSquares.push(
-        checkIncrementedSquares(square, increment, charIncrement)
-      );
-  }
-
-  if (
-    document
-      .getElementById(typePiece + "-" + positionPiece)
-      .classList.contains("selected")
-  ) {
-    firstValidatedElementS = [];
-
-    for (let index = 0; index < unOccupiedSquares.length; index++) {
-      if (unOccupiedSquares[index].length !== 0) {
-        unOccupiedSquares[index].forEach((square) => {
-          square.classList.add("validate");
-          square.innerHTML = '<div class="val-child"></div>';
-
-          square.addEventListener("click", () => {
-            drawSelectedPiece(positionPiece, typePiece, square.id);
-            flipBoard(typePiece);
-          });
-
-          firstValidatedElementS.push(square);
-        });
-      }
-    }
-  }
+  validateRookSquares(positionPiece, typePiece);
 }
 
 function validateKnightMovement(positionPiece, typePiece) {
@@ -859,6 +927,7 @@ function validateQueenMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares(typePiece);
   desmarkEatableSquares();
   removeValidatedSquares();
+  validateRookSquares(positionPiece, typePiece);
 }
 
 function validateKingMovement(positionPiece, typePiece) {

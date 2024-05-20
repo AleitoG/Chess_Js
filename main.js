@@ -202,8 +202,9 @@ function drawSavedPiecesPositions(typePiece) {
       document.getElementById(squaresPassant) !== null
         ? document.getElementById(squaresPassant)
         : null;
-    if (passant !== null)
+    if (passant !== null) {
       passant.classList.add(`passant-${typePiece.split("-")[1]}`);
+    }
     piece.classList.add("occupied");
     piece.innerHTML = `<img src="pieces/${savedPieces[i]}.svg" alt="${savedPieces[i]}" id="${savedPieces[i]}-${piece.id}" class="${savedPieces[i]}" style="user-select: none;" draggable="true"/>`;
   }
@@ -238,11 +239,27 @@ function drawSelectedPiece(positionPiece, typePiece, squareSelected) {
   );
 }
 
-function createNewElement(tagName, attributes = {}) {
+function createNewElement(
+  tagName,
+  attributes = {},
+  children,
+  imageSrc,
+  imageAlt
+) {
   const element = document.createElement(tagName);
 
   for (const [key, value] of Object.entries(attributes)) {
     element.setAttribute(key, value);
+  }
+
+  if (children) {
+    let imgElement = document.createElement("img");
+    imgElement.src = imageSrc;
+    imgElement.alt = imageAlt;
+    imgElement.id = `${imageAlt}-${attributes.id}`;
+    imgElement.className = imageAlt;
+
+    element.appendChild(imgElement);
   }
 
   return element;
@@ -252,8 +269,27 @@ function desmarkEatableSquares() {
   chessboardDefined.forEach((row) => {
     Object.keys(row).forEach((column) => {
       const checkEatableClass = document.getElementById(column);
-      if (checkEatableClass.classList.contains("eatable"))
+      const board = checkEatableClass.parentNode;
+
+      if (checkEatableClass.classList.contains("eatable")) {
         checkEatableClass.classList.remove("eatable");
+        let clasElements = getElementClases(checkEatableClass);
+        let typePiece = checkEatableClass.children[0].classList[0];
+
+        board.replaceChild(
+          createNewElement(
+            "div",
+            {
+              class: `${clasElements}`,
+              id: `${checkEatableClass.id}`,
+            },
+            true,
+            `pieces/${typePiece}.svg`,
+            `${typePiece}`
+          ),
+          checkEatableClass
+        );
+      }
     });
   });
 }
@@ -281,10 +317,16 @@ function replaceUnoccupiedSquares(typePiece) {
 
         const board = squareWithEventListener.parentNode;
         board.replaceChild(
-          createNewElement("div", {
-            class: `${clasElements}`,
-            id: `${squareWithEventListener.id}`,
-          }),
+          createNewElement(
+            "div",
+            {
+              class: `${clasElements}`,
+              id: `${squareWithEventListener.id}`,
+            },
+            false,
+            null,
+            null
+          ),
           squareWithEventListener
         );
       }
@@ -477,14 +519,19 @@ function removeValidatedSquares() {
 
         if (checkValidateClass.classList.contains("validate")) {
           checkValidateClass.classList.remove("validate");
-
           let clasElements = getElementClases(checkValidateClass);
 
           board.replaceChild(
-            createNewElement("div", {
-              class: `${clasElements}`,
-              id: `${checkValidateClass.id}`,
-            }),
+            createNewElement(
+              "div",
+              {
+                class: `${clasElements}`,
+                id: `${checkValidateClass.id}`,
+              },
+              false,
+              null,
+              null
+            ),
             checkValidateClass
           );
         }
@@ -677,11 +724,17 @@ function validatePawnMovement(positionPiece, typePiece) {
           : null;
         if (child !== null) {
           eatableElements[index].replaceChild(
-            createNewElement("img", {
-              class: `${typePiece}`,
-              id: `${typePiece + "-" + child.id.split("-")[2]}`,
-              src: `pieces/${typePiece}.svg`,
-            }),
+            createNewElement(
+              "img",
+              {
+                class: `${typePiece}`,
+                id: `${typePiece + "-" + child.id.split("-")[2]}`,
+                src: `pieces/${typePiece}.svg`,
+              },
+              false,
+              null,
+              null
+            ),
             child
           );
 
@@ -694,11 +747,17 @@ function validatePawnMovement(positionPiece, typePiece) {
           return true;
         } else {
           eatableElements[index].appendChild(
-            createNewElement("img", {
-              class: `${typePiece}`,
-              id: `${typePiece + "-" + eatableElements[index].id}`,
-              src: `pieces/${typePiece}.svg`,
-            })
+            createNewElement(
+              "img",
+              {
+                class: `${typePiece}`,
+                id: `${typePiece + "-" + eatableElements[index].id}`,
+                src: `pieces/${typePiece}.svg`,
+              },
+              false,
+              null,
+              null
+            )
           );
           eatableElements[index].classList.add("occupied");
           let passantPiece = !typePiece.includes("-w")
@@ -999,11 +1058,17 @@ function setPlayersTurn(startEventListeners, pieceColorType) {
       if (pieceColorType === "w") {
         if (pieceType === "w") {
           squareContainer.replaceChild(
-            createNewElement("img", {
-              id: `${`${pieces[index].id}`}`,
-              class: `${getElementClases(pieces[index])}`,
-              src: `pieces/${piece}.svg`,
-            }),
+            createNewElement(
+              "img",
+              {
+                id: `${`${pieces[index].id}`}`,
+                class: `${getElementClases(pieces[index])}`,
+                src: `pieces/${piece}.svg`,
+              },
+              false,
+              null,
+              null
+            ),
             pieces[index]
           );
           if (startEventListeners) {
@@ -1019,11 +1084,17 @@ function setPlayersTurn(startEventListeners, pieceColorType) {
       if (pieceColorType === "b") {
         if (pieceType === "b") {
           squareContainer.replaceChild(
-            createNewElement("img", {
-              id: `${`${pieces[index].id}`}`,
-              class: `${getElementClases(pieces[index])}`,
-              src: `pieces/${piece}.svg`,
-            }),
+            createNewElement(
+              "img",
+              {
+                id: `${`${pieces[index].id}`}`,
+                class: `${getElementClases(pieces[index])}`,
+                src: `pieces/${piece}.svg`,
+              },
+              false,
+              null,
+              null
+            ),
             pieces[index]
           );
           if (startEventListeners) {

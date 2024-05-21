@@ -85,13 +85,13 @@ function createChessBoard() {
 }
 
 function drawBoard(chessBoardWhite, whiteBoard, reverseChessBoard) {
-  const chessboard = whiteBoard
+  let chessboard = whiteBoard
     ? chessBoardWhite.reverse()
     : reverseBoard(chessBoardWhite);
   const squareColor1 = whiteBoard ? "white" : "black";
   const squareColor2 = whiteBoard ? "black" : "white";
 
-  if (reverseChessBoard) chessboard.reverse();
+  if (reverseChessBoard) chessBoardWhite.reverse();
 
   let notationSintax = [chessNotationColumns, chessNotationRows];
 
@@ -194,7 +194,7 @@ function drawSavedPiecesPositions(typePiece) {
   }
 
   document.getElementById("main").innerHTML = "";
-  chessboardDefined = drawBoard(chessboard, !whitePlayer, reverseChessBoard);
+  chessboardDefined = drawBoard(chessboard, whitePlayer, reverseChessBoard);
 
   for (let i = 0; i < savedPiecesPositions.length; i++) {
     const piece = document.getElementById(savedPiecesPositions[i]);

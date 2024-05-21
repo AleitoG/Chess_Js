@@ -273,22 +273,25 @@ function desmarkEatableSquares() {
 
       if (checkEatableClass.classList.contains("eatable")) {
         checkEatableClass.classList.remove("eatable");
-        let clasElements = getElementClases(checkEatableClass);
-        let typePiece = checkEatableClass.children[0].classList[0];
+        if (checkEatableClass.children[0] !== undefined) {
+          let clasElements = getElementClases(checkEatableClass);
+          let typePiece = checkEatableClass.children[0].classList[0];
+          console.log(typePiece);
 
-        board.replaceChild(
-          createNewElement(
-            "div",
-            {
-              class: `${clasElements}`,
-              id: `${checkEatableClass.id}`,
-            },
-            true,
-            `pieces/${typePiece}.svg`,
-            `${typePiece}`
-          ),
-          checkEatableClass
-        );
+          board.replaceChild(
+            createNewElement(
+              "div",
+              {
+                class: `${clasElements}`,
+                id: `${checkEatableClass.id}`,
+              },
+              true,
+              `pieces/${typePiece}.svg`,
+              `${typePiece}`
+            ),
+            checkEatableClass
+          );
+        }
       }
     });
   });

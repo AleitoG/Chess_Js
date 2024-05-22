@@ -191,6 +191,9 @@ function drawSavedPiecesPositions(typePiece) {
       "-" +
       squaresOccupied[i].children[0].id.split("-")[1];
     savedPiecesPositions[i] = squaresOccupied[i].children[0].id.split("-")[2];
+    if (squaresOccupied[i].id === "e7") {
+      console.log("ocupu: ",squaresOccupied[i].children[0]);
+    }
   }
 
   document.getElementById("main").innerHTML = "";
@@ -276,7 +279,6 @@ function desmarkEatableSquares() {
         if (checkEatableClass.children[0] !== undefined) {
           let clasElements = getElementClases(checkEatableClass);
           let typePiece = checkEatableClass.children[0].classList[0];
-          console.log(typePiece);
 
           board.replaceChild(
             createNewElement(
@@ -340,7 +342,7 @@ function replaceUnoccupiedSquares(typePiece) {
 function flipBoard(typePiece) {
   let colorSwitch = typePiece.split("-")[1] === "w" ? "b" : "w";
   setPlayersTurn(false, typePiece.split("-")[1]);
-  setTimeout(drawSavedPiecesPositions(typePiece), 250);
+  drawSavedPiecesPositions(typePiece);
   setPlayersTurn(true, colorSwitch);
 }
 
@@ -585,6 +587,12 @@ function validateRookSquares(positionPiece, typePiece) {
           square.innerHTML = '<div class="val-child"></div>';
 
           square.addEventListener("click", () => {
+            if (square.classList[2].includes("passant")) {
+              const passantClass = square.classList[2];
+              const eatablePassantClass = square.classList[3];
+              square.classList.remove(passantClass);
+              square.classList.remove(eatablePassantClass);
+            }
             drawSelectedPiece(positionPiece, typePiece, square.id);
             flipBoard(typePiece);
           });

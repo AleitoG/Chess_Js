@@ -191,9 +191,6 @@ function drawSavedPiecesPositions(typePiece) {
       "-" +
       squaresOccupied[i].children[0].id.split("-")[1];
     savedPiecesPositions[i] = squaresOccupied[i].children[0].id.split("-")[2];
-    if (squaresOccupied[i].id === "e7") {
-      console.log("ocupu: ",squaresOccupied[i].children[0]);
-    }
   }
 
   document.getElementById("main").innerHTML = "";
@@ -277,7 +274,7 @@ function desmarkEatableSquares() {
       if (checkEatableClass.classList.contains("eatable")) {
         checkEatableClass.classList.remove("eatable");
         if (checkEatableClass.children[0] !== undefined) {
-          let clasElements = getElementClases(checkEatableClass);
+          let clasElements = checkEatableClass.classList;
           let typePiece = checkEatableClass.children[0].classList[0];
 
           board.replaceChild(
@@ -293,18 +290,33 @@ function desmarkEatableSquares() {
             ),
             checkEatableClass
           );
+        } else {
+          if (checkEatableClass.classList[2].includes("passant")) {
+            const passantClass = checkEatableClass.classList[2];
+            const eatablePassantClass = checkEatableClass.classList[3];
+            checkEatableClass.classList.remove(passantClass);
+            checkEatableClass.classList.remove(eatablePassantClass);
+          }
+
+          let clasElements = checkEatableClass.classList;
+
+          board.replaceChild(
+            createNewElement(
+              "div",
+              {
+                class: `${clasElements}`,
+                id: `${checkEatableClass.id}`,
+              },
+              false,
+              null,
+              null
+            ),
+            checkEatableClass
+          );
         }
       }
     });
   });
-}
-
-function getElementClases(piece) {
-  let clasElements = "";
-  for (let index = 0; index < piece.classList.length; index++) {
-    clasElements = clasElements + piece.classList[index] + " ";
-  }
-  return clasElements;
 }
 
 function replaceUnoccupiedSquares(typePiece) {
@@ -318,7 +330,7 @@ function replaceUnoccupiedSquares(typePiece) {
           `passant-${typePiece.split("-")[1]}`
         )
       ) {
-        let clasElements = getElementClases(squareWithEventListener);
+        let clasElements = squareWithEventListener.classList;
 
         const board = squareWithEventListener.parentNode;
         board.replaceChild(
@@ -524,7 +536,7 @@ function removeValidatedSquares() {
 
         if (checkValidateClass.classList.contains("validate")) {
           checkValidateClass.classList.remove("validate");
-          let clasElements = getElementClases(checkValidateClass);
+          let clasElements = checkValidateClass.classList;
 
           board.replaceChild(
             createNewElement(
@@ -587,12 +599,6 @@ function validateRookSquares(positionPiece, typePiece) {
           square.innerHTML = '<div class="val-child"></div>';
 
           square.addEventListener("click", () => {
-            if (square.classList[2].includes("passant")) {
-              const passantClass = square.classList[2];
-              const eatablePassantClass = square.classList[3];
-              square.classList.remove(passantClass);
-              square.classList.remove(eatablePassantClass);
-            }
             drawSelectedPiece(positionPiece, typePiece, square.id);
             flipBoard(typePiece);
           });
@@ -1073,7 +1079,7 @@ function setPlayersTurn(startEventListeners, pieceColorType) {
               "img",
               {
                 id: `${`${pieces[index].id}`}`,
-                class: `${getElementClases(pieces[index])}`,
+                class: `${pieces[index].classList}`,
                 src: `pieces/${piece}.svg`,
               },
               false,
@@ -1099,7 +1105,7 @@ function setPlayersTurn(startEventListeners, pieceColorType) {
               "img",
               {
                 id: `${`${pieces[index].id}`}`,
-                class: `${getElementClases(pieces[index])}`,
+                class: `${pieces[index].classList}`,
                 src: `pieces/${piece}.svg`,
               },
               false,

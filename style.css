@@ -89,9 +89,6 @@ body {
   width: 8px;
   align-content: center;
 }
-img {
-  width: 80px;
-}
 .validate {
   display: flex;
   align-items: center;
@@ -105,4 +102,7 @@ img {
 }
 .eatable {
   background-color: #d36b50 !important;
+}
+img {
+  width: 80px;
 }

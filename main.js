@@ -22,6 +22,7 @@ let reverseChessBoard = true;
 let savedPiecesPositions = [];
 let savedPieces = [];
 let savedPiecesSquarePositions = [];
+let rotate = false;
 
 function reverseObject(object) {
   const keys = Object.keys(object);
@@ -91,7 +92,18 @@ function drawBoard(chessBoardWhite, whiteBoard, reverseChessBoard) {
   const squareColor1 = whiteBoard ? "white" : "black";
   const squareColor2 = whiteBoard ? "black" : "white";
 
-  if (reverseChessBoard) chessBoardWhite.reverse();
+  const isMobile = "ontouchstart" in window || navigator.msMaxTouchPoints > 0;
+
+  if (reverseChessBoard) {
+    chessBoardWhite.reverse();
+    if (isMobile) {
+      const dynamicStyle = document.getElementById("dynamicStyle");
+      dynamicStyle.textContent = rotate
+        ? "img {}"
+        : "img {transform: rotate(180deg);";
+      rotate = !rotate;
+    }
+  }
 
   let notationSintax = [chessNotationColumns, chessNotationRows];
 

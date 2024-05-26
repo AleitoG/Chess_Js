@@ -132,14 +132,14 @@ function drawBoard(chessBoardWhite, whiteBoard, reverseChessBoard) {
 
 function startPiecesPositions() {
   const W_rook_a1 = document.getElementById("a1");
-  const W_rook_h1 = document.getElementById("e4");
+  const W_rook_h1 = document.getElementById("h1");
   const B_rook_a8 = document.getElementById("a8");
   const B_rook_h8 = document.getElementById("h8");
   const W_knight_b1 = document.getElementById("b1");
   const W_knight_g1 = document.getElementById("g1");
   const B_knight_b8 = document.getElementById("b8");
   const B_knight_g8 = document.getElementById("g8");
-  const W_bishop_c1 = document.getElementById("c1");
+  const W_bishop_c1 = document.getElementById("d4"); // c1
   const W_bishop_f1 = document.getElementById("f1");
   const B_bishop_c8 = document.getElementById("c8");
   const B_bishop_f8 = document.getElementById("f8");
@@ -370,7 +370,7 @@ function flipBoard(typePiece) {
   setPlayersTurn(true, colorSwitch);
 }
 
-function checkCompassSquares(positionPiece) {
+function checkCompassSquares(positionPiece, cross) {
   const upSquare = document.getElementById(
     `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) + 1}`
   );
@@ -391,9 +391,60 @@ function checkCompassSquares(positionPiece) {
     `${positionPiece.charAt(0)}${parseInt(positionPiece.charAt(1)) - 1}`
   );
 
-  const validSquares = [upSquare, rightSquare, leftSquare, downSquare];
-  const icrementSquares = [1, null, null, -1];
-  const charIncrementSquares = [null, 1, -1, null];
+  const upRightSquare = document.getElementById(
+    `${String.fromCharCode(positionPiece.charCodeAt(0) + 1)}${
+      parseInt(positionPiece.charAt(1)) + 1
+    }`
+  );
+
+  const upLeftSquare = document.getElementById(
+    `${String.fromCharCode(positionPiece.charCodeAt(0) - 1)}${
+      parseInt(positionPiece.charAt(1)) + 1
+    }`
+  );
+
+  const downRightSquare = document.getElementById(
+    `${String.fromCharCode(positionPiece.charCodeAt(0) + 1)}${
+      parseInt(positionPiece.charAt(1)) - 1
+    }`
+  );
+
+  const downLeftSquare = document.getElementById(
+    `${String.fromCharCode(positionPiece.charCodeAt(0) - 1)}${
+      parseInt(positionPiece.charAt(1)) - 1
+    }`
+  );
+
+  const validSquares =
+    cross === 0
+      ? [upSquare, rightSquare, leftSquare, downSquare]
+      : cross === 1
+      ? [upRightSquare, upLeftSquare, downRightSquare, downLeftSquare]
+      : [
+          upSquare,
+          rightSquare,
+          leftSquare,
+          downSquare,
+          upRightSquare,
+          upLeftSquare,
+          downRightSquare,
+          downLeftSquare,
+        ];
+
+  const icrementSquares =
+    cross === 0
+      ? [1, null, null, -1]
+      : cross === 1
+      ? [1, 1, -1, -1]
+      : [1, null, null, -1, 1, 1, -1, -1];
+
+  const charIncrementSquares =
+    cross === 0
+      ? [null, 1, -1, null]
+      : cross === 1
+      ? [1, 1, -1, -1]
+      : [null, 1, -1, null, 1, 1, -1, -1];
+
   let increment = [];
   let charIncrement = [];
 
@@ -570,7 +621,7 @@ function removeValidatedSquares() {
 }
 
 function validateRookSquares(positionPiece, typePiece) {
-  const compassSquares = checkCompassSquares(positionPiece);
+  const compassSquares = checkCompassSquares(positionPiece, 0);
 
   const availableSquares = compassSquares[0];
   const verticalSquares = compassSquares[1];
@@ -636,6 +687,37 @@ function validateRookSquares(positionPiece, typePiece) {
       }
     });
   }
+}
+
+function validateBishopSquares(positionPiece, typePiece) {
+  const compassSquares = checkCompassSquares(positionPiece, 1);
+  
+  const availableSquares = compassSquares[0];
+  const verticalSquares = compassSquares[1];
+  const horizontalSquares = compassSquares[2];
+  let checkIncrementedSquaresArr = 0;
+  let unOccupiedSquares = [];
+  let eatableSquares = [];
+
+  for (let index = 0; index < availableSquares.length; index++) {
+    const square = availableSquares[index];
+    const increment = verticalSquares[index];
+    const charIncrement = horizontalSquares[index];
+
+    if (square !== null) {
+      checkIncrementedSquaresArr = checkIncrementedSquares(
+        square,
+        increment,
+        charIncrement,
+        `-${typePiece.split("-")[1]}`
+      );
+
+      unOccupiedSquares.push(checkIncrementedSquaresArr[0]);
+      eatableSquares.push(checkIncrementedSquaresArr[1]);
+    }
+  }
+
+  console.log(unOccupiedSquares);
 }
 
 function validatePawnMovement(positionPiece, typePiece) {
@@ -1009,6 +1091,7 @@ function validateBishopMovement(positionPiece, typePiece) {
   replaceUnoccupiedSquares(typePiece);
   desmarkEatableSquares();
   removeValidatedSquares();
+  validateBishopSquares(positionPiece, typePiece);
 }
 
 function validateQueenMovement(positionPiece, typePiece) {
